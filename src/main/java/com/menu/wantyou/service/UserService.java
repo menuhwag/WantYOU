@@ -1,8 +1,8 @@
 package com.menu.wantyou.service;
 
 import com.menu.wantyou.domain.User;
-import com.menu.wantyou.dto.SigninDTO;
-import com.menu.wantyou.dto.SignupDTO;
+import com.menu.wantyou.dto.SignInDTO;
+import com.menu.wantyou.dto.SignUpDTO;
 import com.menu.wantyou.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
@@ -17,7 +17,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public User create(SignupDTO signupDTO) throws DuplicateKeyException{
+    public User create(SignUpDTO signupDTO) throws DuplicateKeyException{
         String username = signupDTO.getUsername();
         String password = passwordEncoder.encode(signupDTO.getPassword());
         String email = signupDTO.getEmail();
@@ -31,7 +31,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public boolean confirmPassword(SigninDTO signinDTO) throws UsernameNotFoundException, BadCredentialsException {
+    public boolean confirmPassword(SignInDTO signinDTO) throws UsernameNotFoundException, BadCredentialsException {
         String username = signinDTO.getUsername();
         String password = signinDTO.getPassword();
 
