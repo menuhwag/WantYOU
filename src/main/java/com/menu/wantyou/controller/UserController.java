@@ -29,15 +29,14 @@ public class UserController {
     }
 
     @PostMapping(value = "/signup", produces = "application/json; charset=UTF-8")
-    public User signup(@RequestBody SignupDTO signupDTO) throws DuplicateKeyException {
-        return userService.create(signupDTO);
+    public ResponseEntity<User> signUp(@RequestBody SignUpDTO signupDTO) throws DuplicateKeyException {
+        return new ResponseEntity<>(userService.create(signupDTO), HttpStatus.OK);
     }
 
     @PostMapping(value = "/signin", produces = "application/json; charset=UTF-8")
-    public ResponseEntity<JwtResponseDTO> signin(@RequestBody SigninDTO signinDTO) {
-        HttpStatus statusCode = HttpStatus.OK;
+    public ResponseEntity<JwtResponseDTO> signIn(@RequestBody SignInDTO signinDTO) {
         if (userService.confirmPassword(signinDTO)) {
-            return new ResponseEntity<>(new JwtResponseDTO("ex_token", signinDTO.getUsername()), statusCode);
+            return new ResponseEntity<>(new JwtResponseDTO("ex_token", signinDTO.getUsername()), HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
