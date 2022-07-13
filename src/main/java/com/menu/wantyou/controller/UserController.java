@@ -30,7 +30,7 @@ public class UserController {
 
     @PostMapping(value = "/signup", produces = "application/json; charset=UTF-8")
     public ResponseEntity<User> signUp(@RequestBody SignUpDTO signupDTO) throws DuplicateKeyException {
-        return new ResponseEntity<>(userService.create(signupDTO), HttpStatus.OK);
+        return new ResponseEntity<>(userService.create(signupDTO), HttpStatus.CREATED);
     }
 
     @PostMapping(value = "/signin", produces = "application/json; charset=UTF-8")
@@ -58,6 +58,6 @@ public class UserController {
     public ResponseEntity<ErrorResponseDTO> handleBadCredentialsException(BadCredentialsException exception) {
         return new ResponseEntity<>(
                 new ErrorResponseDTO(403, "Forbidden", exception.getMessage())
-                , HttpStatus.FORBIDDEN);
+                , HttpStatus.UNAUTHORIZED);
     }
 }
