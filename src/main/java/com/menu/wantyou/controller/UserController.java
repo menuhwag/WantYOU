@@ -2,6 +2,7 @@ package com.menu.wantyou.controller;
 
 import com.menu.wantyou.domain.User;
 import com.menu.wantyou.dto.*;
+import com.menu.wantyou.lib.enumeration.Key;
 import com.menu.wantyou.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
@@ -19,7 +20,7 @@ public class UserController {
 
     @GetMapping(value = "/exists", produces = "application/json; charset=UTF-8")
     public ResponseEntity<CheckExistsDTO> checkExists(@RequestParam("key") String key, @RequestParam("value") String value) {
-        CheckExistsDTO checkExistsDTO = new CheckExistsDTO(key, value);
+        CheckExistsDTO checkExistsDTO = new CheckExistsDTO(Key.titleOf(key), value);
         if ("id".equals(key)) {
             checkExistsDTO.setExists(userService.checkExistsUsername(value));
         } else if ("email".equals(key)) {
@@ -42,8 +43,8 @@ public class UserController {
     }
 
     //Todo. 커스텀 예외 핸들러로 교체
-    @ExceptionHandler(DuplicateKeyException.class)
-    public ResponseEntity<ErrorResponseDTO> handleDuplicateKeyException(DuplicateKeyException exception) {
+    @ExceptionHandler(value = {DuplicateKeyException.class, IllegalArgumentException.class})
+    public ResponseEntity<ErrorResponseDTO> handleBadRequest(Exception exception) {
         return new ResponseEntity<>(
                 new ErrorResponseDTO(400, "Bad Request", exception.getMessage())
                 , HttpStatus.BAD_REQUEST);

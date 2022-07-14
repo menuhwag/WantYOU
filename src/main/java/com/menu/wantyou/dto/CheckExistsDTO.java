@@ -1,5 +1,6 @@
 package com.menu.wantyou.dto;
 
+import com.menu.wantyou.lib.enumeration.Key;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,12 +13,8 @@ public class CheckExistsDTO {
     private String value;
     private boolean exists;
 
-    public CheckExistsDTO(String key, String value) {
-        this.key = Key.valueOf(key.toUpperCase());
+    public CheckExistsDTO(Key key, String value) {
+        this.key = key;
         this.value = value;
-    }
-
-    public enum Key {
-        ID, EMAIL
     }
 }

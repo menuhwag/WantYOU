@@ -1,6 +1,7 @@
 package com.menu.wantyou.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.menu.wantyou.lib.enumeration.Role;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -43,5 +44,6 @@ public class User extends TimestampsCreatedModified {
     private boolean enabeled = true;
 
     @Column(nullable = false)
-    private String role = "USER";
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.USER;
 }
