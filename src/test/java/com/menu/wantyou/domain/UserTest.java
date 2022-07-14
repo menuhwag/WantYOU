@@ -1,5 +1,6 @@
 package com.menu.wantyou.domain;
 
+import com.menu.wantyou.lib.enumeration.Role;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +18,7 @@ class UserTest {
         User user = new User(username, password, email, nickname);
 
         assertNull(user.getId());
-        assertEquals(user.getRole(), "USER");
+        assertEquals(user.getRole(), Role.USER);
         assertTrue(user.isEnabeled());
         assertEquals(user.getUsername(), username);
         assertEquals(user.getPassword(), password);
