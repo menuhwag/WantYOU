@@ -106,6 +106,14 @@ class UserControllerTest {
                     assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
                 }
             }
+            @Test
+            @DisplayName("잘못된 키값 전달시 IllegalArgumentException 예외 발생")
+            void trowsIllegalArgumentException() {
+                String key = "nickname";
+                String value = "jackson";
+
+                assertThrows(IllegalArgumentException.class, () -> userController.checkExists(key, value));
+            }
         }
     }
     @Nested
