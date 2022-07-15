@@ -3,13 +3,12 @@ package com.menu.wantyou.controller;
 import com.menu.wantyou.domain.User;
 import com.menu.wantyou.dto.*;
 import com.menu.wantyou.lib.enumeration.Key;
+import com.menu.wantyou.lib.exception.*;
 import com.menu.wantyou.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -42,23 +41,10 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    //Todo. 커스텀 예외 핸들러로 교체
-    @ExceptionHandler(value = {DuplicateKeyException.class, IllegalArgumentException.class})
-    public ResponseEntity<ErrorResponseDTO> handleBadRequest(Exception exception) {
+    @ExceptionHandler(HttpException.class)
+    public ResponseEntity<ErrorResponseDTO> handleException(HttpException exception) {
         return new ResponseEntity<>(
-                new ErrorResponseDTO(400, "Bad Request", exception.getMessage())
-                , HttpStatus.BAD_REQUEST);
-    }
-    @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<ErrorResponseDTO> handleUsernameNotFoundException(UsernameNotFoundException exception) {
-        return new ResponseEntity<>(
-                new ErrorResponseDTO(404, "Not Found", exception.getMessage())
-                , HttpStatus.NOT_FOUND);
-    }
-    @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<ErrorResponseDTO> handleBadCredentialsException(BadCredentialsException exception) {
-        return new ResponseEntity<>(
-                new ErrorResponseDTO(403, "Forbidden", exception.getMessage())
-                , HttpStatus.UNAUTHORIZED);
+                new ErrorResponseDTO(exception)
+                , exception.getStatus());
     }
 }
