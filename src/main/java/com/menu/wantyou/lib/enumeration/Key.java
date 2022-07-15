@@ -1,5 +1,7 @@
 package com.menu.wantyou.lib.enumeration;
 
+import com.menu.wantyou.lib.exception.BadConstantException;
+
 public enum Key {
     ID("id"),
     EMAIL("email");
@@ -22,6 +24,6 @@ public enum Key {
                 return key;
             }
         }
-        throw new IllegalArgumentException("No matching constant for [" + title + "]");
+        throw new BadConstantException("No matching constant for [" + title + "]");
     }
 }

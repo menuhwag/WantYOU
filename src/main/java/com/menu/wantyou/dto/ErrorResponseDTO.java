@@ -1,5 +1,6 @@
 package com.menu.wantyou.dto;
 
+import com.menu.wantyou.lib.exception.HttpException;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,5 +19,11 @@ public class ErrorResponseDTO {
         this.status = status;
         this.error = error;
         this.message = message;
+    }
+
+    public ErrorResponseDTO(HttpException exception) {
+        this.status = exception.getStatusCode();
+        this.error = exception.getError();
+        this.message = exception.getMessage();
     }
 }
