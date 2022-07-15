@@ -2,6 +2,7 @@ package com.menu.wantyou.controller;
 
 import com.menu.wantyou.domain.User;
 import com.menu.wantyou.dto.*;
+import com.menu.wantyou.lib.exception.BadConstantException;
 import com.menu.wantyou.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -108,11 +109,11 @@ class UserControllerTest {
             }
             @Test
             @DisplayName("잘못된 키값 전달시 IllegalArgumentException 예외 발생")
-            void trowsIllegalArgumentException() {
+            void trowsBadConstantException() {
                 String key = "nickname";
                 String value = "jackson";
 
-                assertThrows(IllegalArgumentException.class, () -> userController.checkExists(key, value));
+                assertThrows(BadConstantException.class, () -> userController.checkExists(key, value));
             }
         }
     }
@@ -133,7 +134,7 @@ class UserControllerTest {
             @Test
             @DisplayName("성공 시 ResponseEntity<User> 반환")
             void createUser() {
-                ResponseEntity<User> responseEntity = new ResponseEntity<>(user, HttpStatus.OK);
+                ResponseEntity<User> responseEntity = new ResponseEntity<>(user, HttpStatus.CREATED);
                 given(userService.create(any(SignUpDTO.class))).willReturn(user);
 
                 ResponseEntity<User> result = userController.signUp(signUpDTO);
@@ -156,7 +157,7 @@ class UserControllerTest {
     }
     @Nested
     @DisplayName("/signin")
-    class Signin {
+    class SignIn {
         @Nested
         @DisplayName("POST")
         class Post {

@@ -3,6 +3,9 @@ package com.menu.wantyou.service;
 import com.menu.wantyou.domain.User;
 import com.menu.wantyou.dto.SignInDTO;
 import com.menu.wantyou.dto.SignUpDTO;
+import com.menu.wantyou.lib.exception.ExistsValueException;
+import com.menu.wantyou.lib.exception.NotFoundException;
+import com.menu.wantyou.lib.exception.UnauthorizedException;
 import com.menu.wantyou.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,9 +15,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Optional;
@@ -80,15 +80,15 @@ class UserServiceTest {
             void throwsExceptionWhenExistsUsername() {
                 given(userRepository.existsByUsername(any(String.class))).willReturn(true);
 
-                assertThrows(DuplicateKeyException.class, () -> userService.create(signupDTO));
+                assertThrows(ExistsValueException.class, () -> userService.create(signupDTO));
             }
 
             @Test
             @DisplayName("예외 발생:이메일 중복")
             void throwsExceptionWhenExistsEmail() {
-                given(userRepository.existsByUsername(any(String.class))).willReturn(true);
+                given(userRepository.existsByEmail(any(String.class))).willReturn(true);
 
-                assertThrows(DuplicateKeyException.class, () -> userService.create(signupDTO));
+                assertThrows(ExistsValueException.class, () -> userService.create(signupDTO));
             }
         }
     }
@@ -109,10 +109,10 @@ class UserServiceTest {
 
         @Test
         @DisplayName("해당 유저정보가 없을 시 UsernameNotFoundException 예외발생")
-        void throwsUernameNotFoundException() {
+        void throwsNotFoundException() {
             given(userRepository.findByUsername(any(String.class))).willReturn(Optional.ofNullable(null));
 
-            assertThrows(UsernameNotFoundException.class, () -> userService.confirmPassword(signinDTO));
+            assertThrows(NotFoundException.class, () -> userService.confirmPassword(signinDTO));
         }
         @Nested
         @DisplayName("비밀번호 확인")
@@ -129,11 +129,11 @@ class UserServiceTest {
 
             @Test
             @DisplayName("잘못된 비밀번호 일시 BadCredentialsException 예외발생")
-            void throwsBadCredentialsException() {
+            void throwsUnauthorizedException() {
                 given(userRepository.findByUsername(any(String.class))).willReturn(Optional.of(savedUser));
                 given(passwordEncoder.matches(any(String.class), any(String.class))).willReturn(false);
 
-                assertThrows(BadCredentialsException.class, () -> userService.confirmPassword(signinDTO));
+                assertThrows(UnauthorizedException.class, () -> userService.confirmPassword(signinDTO));
             }
         }
 
