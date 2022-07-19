@@ -14,8 +14,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -152,51 +150,6 @@ class UserControllerTest {
                 given(userService.create(any(SignUpDTO.class))).willThrow(exception);
 
                 assertThrows(exception.getClass(), () -> userController.signUp(signUpDTO));
-            }
-        }
-    }
-    @Nested
-    @DisplayName("/signin")
-    class SignIn {
-        @Nested
-        @DisplayName("POST")
-        class Post {
-            private final String username = "jack01";
-            private final String password = "passw0rd";
-            private final SignInDTO signInDTO = new SignInDTO(username, password);
-
-            @Test
-            @DisplayName("성공시 ResponseEntity<JwtResponseDTO> 반환")
-            void success() {
-                String token = "ex_token"; // Todo. JWT TOKEN util 생성 시 수정
-                JwtResponseDTO jwtResponseDTO = new JwtResponseDTO(token, signInDTO.getUsername());
-                ResponseEntity<JwtResponseDTO> responseEntity = new ResponseEntity<>(jwtResponseDTO, HttpStatus.OK);
-                given(userService.confirmPassword(any(SignInDTO.class))).willReturn(true);
-
-                ResponseEntity<JwtResponseDTO> result = userController.signIn(signInDTO);
-
-                //assertEquals(responseEntity, result);
-                assertEquals(responseEntity.getStatusCode(), result.getStatusCode());
-                assertEquals(responseEntity.getBody().getToken(), result.getBody().getToken());
-                assertEquals(responseEntity.getBody().getUsername(), result.getBody().getUsername());
-            }
-
-            @Test
-            @DisplayName("유저정보 존재하지 않을 시 UsernameNotFoundException 예외 발생")
-            void throwsUsernameNotFoundException() {
-                UsernameNotFoundException exception = new UsernameNotFoundException("해당 유저정보를 찾을 수 없습니다.");
-                given(userService.confirmPassword(any(SignInDTO.class))).willThrow(exception);
-
-                assertThrows(exception.getClass(), () -> userController.signIn(signInDTO));
-            }
-
-            @Test
-            @DisplayName("비밀번호 불일치 시 BadCredentialsException 예외 발생")
-            void throwsBadCredentialsException() {
-                BadCredentialsException exception = new BadCredentialsException("비밀번호를 확인해주세요.");
-                given(userService.confirmPassword(any(SignInDTO.class))).willThrow(exception);
-
-                assertThrows(exception.getClass(), () -> userController.signIn(signInDTO));
             }
         }
     }
