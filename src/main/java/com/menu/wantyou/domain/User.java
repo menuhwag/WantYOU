@@ -1,6 +1,8 @@
 package com.menu.wantyou.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.menu.wantyou.dto.SignUpDTO;
+import com.menu.wantyou.dto.UpdateUserDTO;
 import com.menu.wantyou.lib.enumeration.Role;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,13 +16,6 @@ import javax.persistence.*;
 @Table(name = "users")
 @Entity
 public class User extends TimestampsCreatedModified {
-
-    public User(String username, String password, String email, String nickname) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.nickname = nickname;
-    }
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -46,4 +41,30 @@ public class User extends TimestampsCreatedModified {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
+
+    public User(String username, String password, String email, String nickname) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.nickname = nickname;
+    }
+
+    public User(SignUpDTO signUpDTO) {
+        this.username = signUpDTO.getUsername();
+        this.password = signUpDTO.getPassword();
+        this.email = signUpDTO.getEmail();
+        this.nickname = signUpDTO.getNickname();
+    }
+
+    public User update(UpdateUserDTO updateUserDTO) {
+        String password = updateUserDTO.getPassword();
+        String email = updateUserDTO.getEmail();
+        String nickname = updateUserDTO.getNickname();
+
+        if (password != null) setPassword(password);
+        if (email != null) setEmail(email);
+        if (nickname != null) setNickname(nickname);
+
+        return this;
+    }
 }

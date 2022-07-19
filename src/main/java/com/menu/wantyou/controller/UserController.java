@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -62,6 +63,22 @@ public class UserController {
     @GetMapping(value = "/all", produces = "application/json; charset=UTF-8")
     public ResponseEntity<List<User>> findAll() {
         return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/me", produces = "application/json; charset=UTF-8")
+    public ResponseEntity<User> getMyAuth(@AuthenticationPrincipal String myUsername) {
+        return new ResponseEntity<>(userService.findOneByUsername(myUsername), HttpStatus.OK);
+    }
+
+    @PatchMapping(value = "/me", produces = "application/json; charset=UTF-8")
+    public ResponseEntity<User> updateMyAuth(@AuthenticationPrincipal String myUsername, @RequestBody UpdateUserDTO updateUserDTO) {
+        return new ResponseEntity<>(userService.update(myUsername, updateUserDTO), HttpStatus.OK);
+    }
+
+    @DeleteMapping(value = "/me", produces = "application/json; charset=UTF-8")
+    public ResponseEntity deleteMyAuth(@AuthenticationPrincipal String username) {
+        userService.delete(username);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     @ExceptionHandler(HttpException.class)
