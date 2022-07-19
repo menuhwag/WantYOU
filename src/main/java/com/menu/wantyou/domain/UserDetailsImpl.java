@@ -1,6 +1,5 @@
-package com.menu.wantyou.security;
+package com.menu.wantyou.domain;
 
-import com.menu.wantyou.domain.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
