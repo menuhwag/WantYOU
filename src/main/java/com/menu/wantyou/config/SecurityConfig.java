@@ -33,7 +33,7 @@ public class SecurityConfig {
                 .antMatchers("/auth/exists").permitAll()
                 .antMatchers("/auth/signin").permitAll()
                 .antMatchers("/auth/signup").permitAll()
-                .antMatchers("/auth").hasAuthority("ADMIN")
+                .antMatchers("/auth/all").hasAuthority("ADMIN")
                 .anyRequest().authenticated();
         http.apply(new JwtSecurityConfig(jwtTokenProvider));
         return http.build();

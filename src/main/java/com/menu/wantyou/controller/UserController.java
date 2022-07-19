@@ -22,7 +22,8 @@ import java.util.List;
 
 
 @RequiredArgsConstructor
-@RestController("/auth")
+@RestController
+@RequestMapping(value = "/auth")
 public class UserController {
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
@@ -58,7 +59,7 @@ public class UserController {
         return new ResponseEntity<>(new JwtResponseDTO(jwt), httpHeaders, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/", produces = "application/json; charset=UTF-8")
+    @GetMapping(value = "/all", produces = "application/json; charset=UTF-8")
     public ResponseEntity<List<User>> findAll() {
         return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
     }
