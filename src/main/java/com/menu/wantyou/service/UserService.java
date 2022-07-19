@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class UserService {
@@ -31,17 +33,8 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public boolean confirmPassword(SignInDTO signinDTO) throws NotFoundException, UnauthorizedException {
-        String username = signinDTO.getUsername();
-        String password = signinDTO.getPassword();
-
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundException("해당 유저정보를 찾을 수 없습니다."));
-        String encodePassword = user.getPassword();
-        if (passwordEncoder.matches(password, encodePassword)) {
-            return true;
-        } else {
-            throw new UnauthorizedException("비밀번호를 확인해주세요.");
-        }
+    public List<User> findAll() {
+        return userRepository.findAll();
     }
 
     public boolean checkExistsUsername(String username) {

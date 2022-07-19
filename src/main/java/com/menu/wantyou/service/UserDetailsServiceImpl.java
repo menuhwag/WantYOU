@@ -1,11 +1,12 @@
-package com.menu.wantyou.security;
+package com.menu.wantyou.service;
 
 import com.menu.wantyou.domain.User;
+import com.menu.wantyou.lib.exception.NotFoundException;
 import com.menu.wantyou.repository.UserRepository;
+import com.menu.wantyou.domain.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -14,8 +15,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Not Found the User"));
+    public UserDetails loadUserByUsername(String username) throws NotFoundException {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundException("Not Found the User"));
         return new UserDetailsImpl(user);
     }
 }
