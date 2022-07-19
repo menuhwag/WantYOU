@@ -3,9 +3,9 @@ package com.menu.wantyou.service;
 import com.menu.wantyou.domain.User;
 import com.menu.wantyou.dto.SignInDTO;
 import com.menu.wantyou.dto.SignUpDTO;
+import com.menu.wantyou.dto.UpdateUserDTO;
 import com.menu.wantyou.lib.exception.ExistsValueException;
 import com.menu.wantyou.lib.exception.NotFoundException;
-import com.menu.wantyou.lib.exception.UnauthorizedException;
 import com.menu.wantyou.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -53,14 +53,14 @@ class UserServiceTest {
         @BeforeEach
         public void setUp() {
             signupDTO = new SignUpDTO(username, password, email, nickname);
-            user = new User(username, password, email, nickname);
-            given(passwordEncoder.encode(any(String.class))).willReturn(password);
+            user = new User(signupDTO);
         }
 
         @Test
         @DisplayName("저장")
         void create() {
             //given
+            given(passwordEncoder.encode(any(String.class))).willReturn(password);
             given(userRepository.existsByUsername(any(String.class))).willReturn(false);
             given(userRepository.existsByEmail(any(String.class))).willReturn(false);
             given(userRepository.save(any(User.class))).willReturn(user);
@@ -94,48 +94,41 @@ class UserServiceTest {
     }
 
     @Nested
-    @DisplayName("로그인")
-    class SignIn {
+    @DisplayName("유저 수정")
+    class UpdateUser {
+        String newPW = "12341234";
+        String newEmail = "jack01@naver.com";
+        String newNickname = "jacking";
+        private UpdateUserDTO updateUserDTO;
 
         @BeforeEach
         public void setUp() {
+            updateUserDTO = new UpdateUserDTO(newPW, newEmail, newNickname);
             signupDTO = new SignUpDTO(username, password, email, nickname);
-            signinDTO = new SignInDTO(username, password);
-            user = new User(username, password, email, nickname);
-            given(passwordEncoder.encode(any(String.class))).willReturn(password);
-            given(userRepository.save(any(User.class))).willReturn(user);
-            savedUser = userService.create(signupDTO);
+            user = new User(signupDTO);
         }
 
         @Test
-        @DisplayName("해당 유저정보가 없을 시 UsernameNotFoundException 예외발생")
-        void throwsNotFoundException() {
-            given(userRepository.findByUsername(any(String.class))).willReturn(Optional.ofNullable(null));
+        @DisplayName("정상")
+        public void success() {
 
-            assertThrows(NotFoundException.class, () -> userService.confirmPassword(signinDTO));
-        }
-        @Nested
-        @DisplayName("비밀번호 확인")
-        class ConfirmPassword {
-            @Test
-            @DisplayName("옳은 비밀번호 일시 true 반환")
-            void rightPassword() {
-                given(userRepository.findByUsername(any(String.class))).willReturn(Optional.of(savedUser));
-                given(passwordEncoder.matches(any(String.class), any(String.class))).willReturn(true);
+            given(userRepository.findByUsername(any(String.class))).willReturn(Optional.of(user));
+            given(passwordEncoder.encode(any(String.class))).willReturn(newPW);
+            given(userRepository.save(any(User.class))).willReturn(user.update(updateUserDTO));
 
-                assertTrue(userService.confirmPassword(signinDTO));
+            User updateUser = userService.update(username, updateUserDTO);
 
-            }
-
-            @Test
-            @DisplayName("잘못된 비밀번호 일시 BadCredentialsException 예외발생")
-            void throwsUnauthorizedException() {
-                given(userRepository.findByUsername(any(String.class))).willReturn(Optional.of(savedUser));
-                given(passwordEncoder.matches(any(String.class), any(String.class))).willReturn(false);
-
-                assertThrows(UnauthorizedException.class, () -> userService.confirmPassword(signinDTO));
-            }
+            assertEquals(updateUser.getUsername(), user.getUsername());
+            assertEquals(updateUser.getPassword(), newPW);
+            assertEquals(updateUser.getNickname(), newNickname);
+            assertEquals(updateUser.getEmail(), newEmail);
         }
 
+        @Test
+        @DisplayName("유저 정보 없을 시 NotFoundException 예외 발생")
+        public void throwsNotFoundException() {
+            given(userRepository.findByUsername(any(String.class))).willThrow(new NotFoundException("해당 유저 정보를 찾을 수 없습니다."));
+            assertThrows(NotFoundException.class, () -> userService.update(username, updateUserDTO));
+        }
     }
 }
