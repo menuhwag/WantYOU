@@ -1,6 +1,7 @@
 package com.menu.wantyou.controller;
 
 import com.menu.wantyou.domain.User;
+import com.menu.wantyou.domain.UserDetailsImpl;
 import com.menu.wantyou.dto.*;
 import com.menu.wantyou.lib.enumeration.Key;
 import com.menu.wantyou.lib.exception.*;
@@ -66,19 +67,24 @@ public class UserController {
     }
 
     @GetMapping(value = "/me", produces = "application/json; charset=UTF-8")
-    public ResponseEntity<User> getMyAuth(@AuthenticationPrincipal String myUsername) {
-        return new ResponseEntity<>(userService.findOneByUsername(myUsername), HttpStatus.OK);
+    public ResponseEntity<User> getMyAuth(@AuthenticationPrincipal UserDetailsImpl myAuth) {
+        return new ResponseEntity<>(userService.findOneByUsername(myAuth.getUsername()), HttpStatus.OK);
     }
 
     @PatchMapping(value = "/me", produces = "application/json; charset=UTF-8")
-    public ResponseEntity<User> updateMyAuth(@AuthenticationPrincipal String myUsername, @RequestBody UpdateUserDTO updateUserDTO) {
-        return new ResponseEntity<>(userService.update(myUsername, updateUserDTO), HttpStatus.OK);
+    public ResponseEntity<User> updateMyAuth(@AuthenticationPrincipal UserDetailsImpl myAuth, @RequestBody UpdateUserDTO updateUserDTO) {
+        return new ResponseEntity<>(userService.update(myAuth.getUsername(), updateUserDTO), HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/me", produces = "application/json; charset=UTF-8")
-    public ResponseEntity deleteMyAuth(@AuthenticationPrincipal String username) {
-        userService.delete(username);
+    public ResponseEntity deleteMyAuth(@AuthenticationPrincipal UserDetailsImpl myAuth) {
+        userService.delete(myAuth.getUsername());
         return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping(value = "/email-verify", produces = "application/json; charset=UTF-8")
+    public void verifyEmail(@RequestParam("verifyToken") String verifyToken) {
+        userService.emailVerify(verifyToken);
     }
 
     @ExceptionHandler(HttpException.class)

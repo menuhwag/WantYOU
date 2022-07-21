@@ -2,7 +2,7 @@ package com.menu.wantyou.lib.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class HttpException extends RuntimeException{
+public abstract class HttpException extends RuntimeException{
     private final HttpStatus status;
 
     public HttpException(String message, HttpStatus status) {

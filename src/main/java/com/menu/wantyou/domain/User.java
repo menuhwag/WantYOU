@@ -19,7 +19,7 @@ public class User extends TimestampsCreatedModified {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "USER_ID")
+    @Column
     private Long id;
 
     @Column(nullable = false)
@@ -37,6 +37,9 @@ public class User extends TimestampsCreatedModified {
 
     @Column(nullable = false)
     private boolean enabeled = true;
+
+    @Column(nullable = false)
+    private boolean authEmail = false;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
