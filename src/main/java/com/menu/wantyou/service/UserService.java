@@ -2,14 +2,17 @@ package com.menu.wantyou.service;
 
 import com.menu.wantyou.domain.EmailVerifyToken;
 import com.menu.wantyou.domain.User;
+import com.menu.wantyou.dto.SignInDTO;
 import com.menu.wantyou.dto.SignUpDTO;
 import com.menu.wantyou.dto.UpdateUserDTO;
 import com.menu.wantyou.lib.exception.EmailSendException;
 import com.menu.wantyou.lib.exception.ExistsValueException;
 import com.menu.wantyou.lib.exception.NotFoundException;
+import com.menu.wantyou.lib.exception.UnauthorizedException;
 import com.menu.wantyou.lib.util.VerifyEmailSender;
 import com.menu.wantyou.repository.EmailVerifyTokenRepository;
 import com.menu.wantyou.repository.UserRepository;
+import com.sun.jdi.InternalException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -79,6 +82,30 @@ public class UserService {
         userRepository.save(user);
         // 인증완료된 토큰 삭제
         emailVerifyTokenRepository.delete(emailVerify);
+    }
+
+    @Transactional(rollbackOn = {EmailSendException.class, InternalException.class, IllegalArgumentException.class})
+    public void changeVerifyEmailAndSendVerifyMail(SignInDTO signInDTO, String email) {
+        String username = signInDTO.getUsername();
+        String password = signInDTO.getPassword();
+
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundException("해당 유저 정보를 찾을 수 없습니다."));
+        if (!passwordEncoder.matches(password, user.getPassword())) throw new UnauthorizedException("비밀번호를 확인해주세요.");
+
+        user.setEmail(email);
+        userRepository.save(user);
+
+        String uuid = UUID.randomUUID().toString();
+        EmailVerifyToken emailVerifyToken;
+        if (emailVerifyTokenRepository.existsByUser(user)) {
+            emailVerifyToken = emailVerifyTokenRepository.findByUser(user).orElseThrow(InternalException::new);
+            emailVerifyToken.setToken(uuid);
+        } else {
+            emailVerifyToken = new EmailVerifyToken(user, uuid);
+        }
+        emailVerifyTokenRepository.save(emailVerifyToken);
+
+        VerifyEmailSender.sendVerifyCode(email, uuid);
     }
 
     public boolean checkExistsUsername(String username) {

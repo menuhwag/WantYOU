@@ -87,6 +87,12 @@ public class UserController {
         userService.emailVerify(verifyToken);
     }
 
+    @PatchMapping(value = "/email-verify", produces = "application/json; charset=UTF-8")
+    public ResponseEntity changeVerifyEmailAndSendVerifyMail(@RequestBody SignInDTO signInDTO, @RequestParam("email") String email) {
+        userService.changeVerifyEmailAndSendVerifyMail(signInDTO, email);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+
     @ExceptionHandler(HttpException.class)
     public ResponseEntity<ErrorResponseDTO> handleException(HttpException exception) {
         return new ResponseEntity<>(
