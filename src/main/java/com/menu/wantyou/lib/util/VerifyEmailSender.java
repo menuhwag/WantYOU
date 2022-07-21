@@ -20,9 +20,11 @@ public class VerifyEmailSender {
 
     public VerifyEmailSender(
             @Value("${util.email.user}") String user,
-            @Value("${util.email.password}") String pass ) {
+            @Value("${util.email.password}") String pass,
+            @Value("${base.url}") String baseUrl) {
         this.user = user;
         this.pass = pass;
+        this.baseURL = baseUrl;
     }
 
     private static final Properties prop;
