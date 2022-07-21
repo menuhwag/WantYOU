@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.time.ZoneId;
@@ -23,7 +22,7 @@ public class JwtTokenProvider {
     private final String AUTHORITIES_KEY = "auth";
 
 
-    public JwtTokenProvider(@Value("${jwt.secret}") String secret, @Value("${jwt.tokenExpiration}") long tokenExpiration) {
+    public JwtTokenProvider(@Value("${util.jwt.secret}") String secret, @Value("${util.jwt.tokenExpiration}") long tokenExpiration) {
         this.secret = secret;
         this.tokenExpiration = tokenExpiration * 1000;
     }
@@ -73,6 +72,6 @@ public class JwtTokenProvider {
         user.setRole(Role.of(rolesStr));
         UserDetailsImpl userDetails = new UserDetailsImpl(user);
 
-        return new UsernamePasswordAuthenticationToken(userDetails.getUsername(), token, userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
     }
 }
