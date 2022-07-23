@@ -3,12 +3,14 @@ package com.menu.wantyou.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.menu.wantyou.dto.SignUpDTO;
 import com.menu.wantyou.dto.UpdateUserDTO;
+import com.menu.wantyou.dto.admin.AdminUpdateUserDTO;
 import com.menu.wantyou.lib.enumeration.Role;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 
 @Getter
 @Setter
@@ -22,6 +24,7 @@ public class User extends TimestampsCreatedModified {
     @Column
     private Long id;
 
+    @Size(min = 6, max = 16)
     @Column(nullable = false)
     private String username;
 
@@ -32,12 +35,15 @@ public class User extends TimestampsCreatedModified {
     @Column(nullable = false)
     private String email;
 
+    @Size(min = 2, max = 10)
     @Column(nullable = false)
     private String nickname;
 
+    @JsonIgnore
     @Column(nullable = false)
-    private boolean enabeled = true;
+    private boolean enabled = true;
 
+    @JsonIgnore
     @Column(nullable = false)
     private boolean authEmail = false;
 
@@ -67,6 +73,16 @@ public class User extends TimestampsCreatedModified {
         if (password != null) setPassword(password);
         if (email != null) setEmail(email);
         if (nickname != null) setNickname(nickname);
+
+        return this;
+    }
+
+    public User update(AdminUpdateUserDTO updateUserDTO) {
+        Boolean enabled = updateUserDTO.getEnabled();
+        Role role = updateUserDTO.getRole();
+
+        if (enabled != null) setEnabled(enabled);
+        if (role != null) setRole(role);
 
         return this;
     }

@@ -36,7 +36,7 @@ public class SecurityConfig {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests()
                 .antMatchers("/auth/exists", "/auth/signin", "/auth/signup", "/auth/email-verify").permitAll()
-                .antMatchers("/auth/all").hasAuthority("ADMIN")
+                .antMatchers("/auth").hasAuthority("ADMIN")
                 .anyRequest().authenticated();
         http.apply(new JwtSecurityConfig(jwtTokenProvider));
         return http.build();

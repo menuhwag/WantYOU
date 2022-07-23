@@ -3,6 +3,7 @@ package com.menu.wantyou.controller;
 import com.menu.wantyou.domain.User;
 import com.menu.wantyou.domain.UserDetailsImpl;
 import com.menu.wantyou.dto.*;
+import com.menu.wantyou.dto.admin.AdminUpdateUserDTO;
 import com.menu.wantyou.lib.enumeration.Key;
 import com.menu.wantyou.lib.exception.*;
 import com.menu.wantyou.lib.util.jwt.JwtFilter;
@@ -18,8 +19,10 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 
@@ -43,12 +46,12 @@ public class UserController {
     }
 
     @PostMapping(value = "/signup", produces = "application/json; charset=UTF-8")
-    public ResponseEntity<User> signUp(@RequestBody SignUpDTO signupDTO) throws DuplicateKeyException {
+    public ResponseEntity<?> signUp(@Valid @RequestBody SignUpDTO signupDTO) throws DuplicateKeyException {
         return new ResponseEntity<>(userService.create(signupDTO), HttpStatus.CREATED);
     }
 
     @PostMapping(value = "/signin", produces = "application/json; charset=UTF-8")
-    public ResponseEntity<JwtResponseDTO> signIn(@RequestBody SignInDTO signinDTO) {
+    public ResponseEntity<JwtResponseDTO> signIn(@Valid @RequestBody SignInDTO signinDTO) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(signinDTO.getUsername(), signinDTO.getPassword()); // 인증용 객체 생성
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -61,18 +64,13 @@ public class UserController {
         return new ResponseEntity<>(new JwtResponseDTO(jwt), httpHeaders, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/all", produces = "application/json; charset=UTF-8")
-    public ResponseEntity<List<User>> findAll() {
-        return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
-    }
-
     @GetMapping(value = "/me", produces = "application/json; charset=UTF-8")
     public ResponseEntity<User> getMyAuth(@AuthenticationPrincipal UserDetailsImpl myAuth) {
         return new ResponseEntity<>(userService.findOneByUsername(myAuth.getUsername()), HttpStatus.OK);
     }
 
     @PatchMapping(value = "/me", produces = "application/json; charset=UTF-8")
-    public ResponseEntity<User> updateMyAuth(@AuthenticationPrincipal UserDetailsImpl myAuth, @RequestBody UpdateUserDTO updateUserDTO) {
+    public ResponseEntity<User> updateMyAuth(@AuthenticationPrincipal UserDetailsImpl myAuth, @Valid @RequestBody UpdateUserDTO updateUserDTO) {
         return new ResponseEntity<>(userService.update(myAuth.getUsername(), updateUserDTO), HttpStatus.OK);
     }
 
@@ -88,15 +86,34 @@ public class UserController {
     }
 
     @PatchMapping(value = "/email-verify", produces = "application/json; charset=UTF-8")
-    public ResponseEntity changeVerifyEmailAndSendVerifyMail(@RequestBody SignInDTO signInDTO, @RequestParam("email") String email) {
-        userService.changeVerifyEmailAndSendVerifyMail(signInDTO, email);
+    public ResponseEntity changeVerifyEmailAndSendVerifyMail(@Valid @RequestBody ChangeVerifyEmailDTO changeVerifyEmailDTO) {
+        userService.changeVerifyEmailAndSendVerifyMail(changeVerifyEmailDTO);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping(value = "", produces = "application/json; charset=UTF-8")
+    public ResponseEntity<List<User>> findAll() {
+        return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
+    }
+
+    @PatchMapping(value = "", produces = "application/json; charset=UTF-8")
+    public ResponseEntity<User> updateEnableAndRole(@Valid @RequestParam AdminUpdateUserDTO adminUpdateUserDTO) {
+        return new ResponseEntity<>(userService.updateEnableAndRole(adminUpdateUserDTO), HttpStatus.OK);
     }
 
     @ExceptionHandler(HttpException.class)
     public ResponseEntity<ErrorResponseDTO> handleException(HttpException exception) {
         return new ResponseEntity<>(
-                new ErrorResponseDTO(exception)
-                , exception.getStatus());
+                new ErrorResponseDTO(exception),
+                exception.getStatus());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ValidationErrorResponseDTO> handleValidationError(MethodArgumentNotValidException exception) {
+        System.out.println(exception.getClass());
+        return new ResponseEntity<>(
+                new ValidationErrorResponseDTO(exception),
+                HttpStatus.BAD_REQUEST
+        );
     }
 }

@@ -53,7 +53,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return user.isEnabeled();
+        return user.isEnabled();
     }
 
     public boolean isAuthEmail() {
