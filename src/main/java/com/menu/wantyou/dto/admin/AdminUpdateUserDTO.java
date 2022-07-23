@@ -1,5 +1,6 @@
-package com.menu.wantyou.dto;
+package com.menu.wantyou.dto.admin;
 
+import com.menu.wantyou.lib.enumeration.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,14 +11,14 @@ import javax.validation.constraints.Size;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class SignInDTO {
+@AllArgsConstructor
+public class AdminUpdateUserDTO {
     @NotBlank
     @Size(min = 6, max = 16)
     private String username;
 
-    @NotBlank
-    @Size(min = 8, max = 16)
-    private String password;
+    private Boolean enabled;
+
+    private Role role;
 }

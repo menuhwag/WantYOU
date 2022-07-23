@@ -2,9 +2,10 @@ package com.menu.wantyou.service;
 
 import com.menu.wantyou.domain.EmailVerifyToken;
 import com.menu.wantyou.domain.User;
-import com.menu.wantyou.dto.SignInDTO;
+import com.menu.wantyou.dto.ChangeVerifyEmailDTO;
 import com.menu.wantyou.dto.SignUpDTO;
 import com.menu.wantyou.dto.UpdateUserDTO;
+import com.menu.wantyou.dto.admin.AdminUpdateUserDTO;
 import com.menu.wantyou.lib.exception.EmailSendException;
 import com.menu.wantyou.lib.exception.ExistsValueException;
 import com.menu.wantyou.lib.exception.NotFoundException;
@@ -85,9 +86,10 @@ public class UserService {
     }
 
     @Transactional(rollbackOn = {EmailSendException.class, InternalException.class, IllegalArgumentException.class})
-    public void changeVerifyEmailAndSendVerifyMail(SignInDTO signInDTO, String email) {
-        String username = signInDTO.getUsername();
-        String password = signInDTO.getPassword();
+    public void changeVerifyEmailAndSendVerifyMail(ChangeVerifyEmailDTO changeVerifyEmailDTO) {
+        String username = changeVerifyEmailDTO.getUsername();
+        String password = changeVerifyEmailDTO.getPassword();
+        String email = changeVerifyEmailDTO.getEmail();
 
         User user = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundException("해당 유저 정보를 찾을 수 없습니다."));
         if (!passwordEncoder.matches(password, user.getPassword())) throw new UnauthorizedException("비밀번호를 확인해주세요.");
@@ -106,6 +108,13 @@ public class UserService {
         emailVerifyTokenRepository.save(emailVerifyToken);
 
         VerifyEmailSender.sendVerifyCode(email, uuid);
+    }
+
+    public User updateEnableAndRole(AdminUpdateUserDTO adminUpdateUserDTO) {
+        String username = adminUpdateUserDTO.getUsername();
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundException("해당 유저 정보를 찾을 수 없습니다."));
+        user.update(adminUpdateUserDTO);
+        return userRepository.save(user);
     }
 
     public boolean checkExistsUsername(String username) {
