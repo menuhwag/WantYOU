@@ -21,7 +21,7 @@ class UserTest {
 
         assertNull(user.getId());
         assertEquals(user.getRole(), Role.USER);
-        assertTrue(user.isEnabeled());
+        assertTrue(user.isEnabled());
         assertEquals(user.getUsername(), username);
         assertEquals(user.getPassword(), password);
         assertEquals(user.getEmail(), email);

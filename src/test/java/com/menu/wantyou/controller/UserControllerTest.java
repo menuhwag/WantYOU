@@ -135,7 +135,7 @@ class UserControllerTest {
                 ResponseEntity<User> responseEntity = new ResponseEntity<>(user, HttpStatus.CREATED);
                 given(userService.create(any(SignUpDTO.class))).willReturn(user);
 
-                ResponseEntity<User> result = userController.signUp(signUpDTO);
+                ResponseEntity<?> result = userController.signUp(signUpDTO);
 
                 assertEquals(responseEntity, result);
                 assertEquals(user, result.getBody());
