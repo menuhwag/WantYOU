@@ -97,7 +97,7 @@ public class UserController {
     }
 
     @PatchMapping(value = "", produces = "application/json; charset=UTF-8")
-    public ResponseEntity<User> updateEnableAndRole(@Valid @RequestParam AdminUpdateUserDTO adminUpdateUserDTO) {
+    public ResponseEntity<User> updateEnableAndRole(@Valid @RequestBody AdminUpdateUserDTO adminUpdateUserDTO) {
         return new ResponseEntity<>(userService.updateEnableAndRole(adminUpdateUserDTO), HttpStatus.OK);
     }
 

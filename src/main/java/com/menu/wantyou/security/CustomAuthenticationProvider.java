@@ -29,13 +29,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         UserDetailsImpl user = (UserDetailsImpl) userDetailsService.loadUserByUsername(username);
 
         if (!bCryptPasswordEncoder.matches(password, user.getPassword())) {
-            System.err.println("비밀번호 불일치");
             throw new BadCredentialsException("비밀번호를 확인해주세요.");
         } else if(!user.isEnabled()) {
-            System.err.println("계정 활성화 필요");
             throw new DisabledException("계정이 활성화 되지 않았습니다.");
         } else if(!user.isAuthEmail()) {
-            System.err.println("이메일 인증 필요");
             throw new DisabledException("이메일 인증이 필요합니다.");
         }
 
