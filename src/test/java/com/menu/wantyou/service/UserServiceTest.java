@@ -1,11 +1,13 @@
 package com.menu.wantyou.service;
 
+import com.menu.wantyou.domain.EmailVerifyToken;
 import com.menu.wantyou.domain.User;
-import com.menu.wantyou.dto.SignInDTO;
 import com.menu.wantyou.dto.SignUpDTO;
 import com.menu.wantyou.dto.UpdateUserDTO;
 import com.menu.wantyou.lib.exception.ExistsValueException;
 import com.menu.wantyou.lib.exception.NotFoundException;
+import com.menu.wantyou.lib.util.VerifyEmailSender;
+import com.menu.wantyou.repository.EmailVerifyTokenRepository;
 import com.menu.wantyou.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -22,12 +25,16 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mockStatic;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private EmailVerifyTokenRepository emailVerifyTokenRepository;
 
     @Mock
     private BCryptPasswordEncoder passwordEncoder;
@@ -42,7 +49,6 @@ class UserServiceTest {
     private final String nickname = "jackson";
 
     private SignUpDTO signupDTO;
-    private SignInDTO signinDTO;
     private User user;
     private User savedUser;
 
@@ -64,9 +70,12 @@ class UserServiceTest {
             given(userRepository.existsByUsername(any(String.class))).willReturn(false);
             given(userRepository.existsByEmail(any(String.class))).willReturn(false);
             given(userRepository.save(any(User.class))).willReturn(user);
+            given(emailVerifyTokenRepository.save(any(EmailVerifyToken.class))).willReturn(null);
 
             //when
-            savedUser = userService.create(signupDTO);
+            try (MockedStatic<VerifyEmailSender> mockedStatic = mockStatic(VerifyEmailSender.class)) {
+                savedUser = userService.create(signupDTO);
+            }
 
             //then
             assertEquals(user, savedUser);

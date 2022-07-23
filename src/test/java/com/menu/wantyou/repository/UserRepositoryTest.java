@@ -37,7 +37,7 @@ public class UserRepositoryTest {
 
         assertEquals(saved, user);
         assertNotNull(saved.getId());
-        assertEquals(saved.isEnabeled(), user.isEnabeled());
+        assertEquals(saved.isEnabled(), user.isEnabled());
         assertEquals(saved.getRole(), user.getRole());
         assertEquals(saved.getUsername(), user.getUsername());
         assertEquals(saved.getPassword(), user.getPassword());
