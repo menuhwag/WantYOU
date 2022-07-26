@@ -5,11 +5,11 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class UpdateProfileDTO {
+@AllArgsConstructor
+public class CreateProfileDTO {
     private String name;
     private String birthYear;
     private String birthDay;
-    private String hobby;
+    @Builder.Default private String hobby = "";
 }

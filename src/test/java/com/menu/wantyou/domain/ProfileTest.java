@@ -1,5 +1,6 @@
 package com.menu.wantyou.domain;
 
+import com.menu.wantyou.dto.CreateProfileDTO;
 import com.menu.wantyou.dto.UpdateProfileDTO;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +18,12 @@ class ProfileTest {
     User user = new User(username, password, email, nickname);
     @Test
     public void Create_Profile() {
-        Profile profile = new Profile(user, name, year, day);
+        CreateProfileDTO createProfileDTO = CreateProfileDTO.builder()
+                                                            .name(name)
+                                                            .birthYear(year)
+                                                            .birthDay(day)
+                                                            .build();
+        Profile profile = new Profile(user, createProfileDTO);
 
         assertNull(profile.getId());
         assertEquals(user, profile.getUser());
@@ -33,23 +39,41 @@ class ProfileTest {
         String day1 = "1302";
         String day2 = "0230";
 
-        assertThrows(IllegalArgumentException.class, () -> new Profile(user, name, year, day1));
-        assertThrows(IllegalArgumentException.class, () -> new Profile(user, name, year, day2));
+        CreateProfileDTO createProfileDTO1 = CreateProfileDTO.builder()
+                                                            .name(name)
+                                                            .birthYear(year)
+                                                            .birthDay(day1)
+                                                            .build();
+
+        CreateProfileDTO createProfileDTO2 = CreateProfileDTO.builder()
+                                                            .name(name)
+                                                            .birthYear(year)
+                                                            .birthDay(day2)
+                                                            .build();
+
+        assertThrows(IllegalArgumentException.class, () -> new Profile(user, createProfileDTO1));
+        assertThrows(IllegalArgumentException.class, () -> new Profile(user, createProfileDTO2));
     }
 
     @Test
     public void Update_Profile() {
-        Profile profile = new Profile(user, name, year, day);
+        CreateProfileDTO createProfileDTO = CreateProfileDTO.builder()
+                                                            .name(name)
+                                                            .birthYear(year)
+                                                            .birthDay(day)
+                                                            .build();
+        Profile profile = new Profile(user, createProfileDTO);
         String newName = "김첨지";
         String newYear = "2001";
         String newDay = "1009";
         String newHobby = "축구;영화";
 
-        UpdateProfileDTO updateProfileDTO = new UpdateProfileDTO();
-        updateProfileDTO.setName(newName);
-        updateProfileDTO.setYear(newYear);
-        updateProfileDTO.setDay(newDay);
-        updateProfileDTO.setHobby(newHobby);
+        UpdateProfileDTO updateProfileDTO = UpdateProfileDTO.builder()
+                                                            .name(newName)
+                                                            .birthYear(newYear)
+                                                            .birthDay(newDay)
+                                                            .hobby(newHobby)
+                                                            .build();
 
         Profile updateProfile =  profile.update(updateProfileDTO);
 
@@ -63,13 +87,19 @@ class ProfileTest {
 
     @Test
     public void When_Updating_BirthDay_is_Wrong() {
-        Profile profile = new Profile(user, name, year, day);
+        CreateProfileDTO createProfileDTO = CreateProfileDTO.builder()
+                                                            .name(name)
+                                                            .birthYear(year)
+                                                            .birthDay(day)
+                                                            .build();
+        Profile profile = new Profile(user, createProfileDTO);
         String newYear = "2001";
         String newDay = "1309";
 
-        UpdateProfileDTO updateProfileDTO = new UpdateProfileDTO();
-        updateProfileDTO.setYear(newYear);
-        updateProfileDTO.setDay(newDay);
+        UpdateProfileDTO updateProfileDTO = UpdateProfileDTO.builder()
+                                                            .birthYear(newYear)
+                                                            .birthDay(newDay)
+                                                            .build();
 
         assertThrows(IllegalArgumentException.class, () -> profile.update(updateProfileDTO));
     }
