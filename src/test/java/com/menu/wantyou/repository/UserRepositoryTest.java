@@ -1,6 +1,8 @@
 package com.menu.wantyou.repository;
 
+import com.menu.wantyou.domain.Profile;
 import com.menu.wantyou.domain.User;
+import com.menu.wantyou.dto.CreateProfileDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -22,12 +24,21 @@ public class UserRepositoryTest {
     private final String password = "passw0rd";
     private final String email = "jack01@gmail.com";
     private final String nickname = "jackson";
+    private final String name = "홍길동";
+    private final String birthYear = "2000";
+    private final String birthDay = "1223";
+    private final CreateProfileDTO createProfileDTO = CreateProfileDTO.builder()
+                                                                        .name(name)
+                                                                        .birthYear(birthYear)
+                                                                        .birthDay(birthDay)
+                                                                        .build();
 
     private User user;
 
     @BeforeEach
     public void createUser() {
         this.user = new User(username, password, email, nickname);
+        this.user.setProfile(new Profile(createProfileDTO));
     }
 
     @Test
