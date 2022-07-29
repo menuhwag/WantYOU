@@ -18,10 +18,6 @@ public class Profile {
     @Column
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
     @Column(nullable = false)
     private String name;
 
@@ -36,11 +32,10 @@ public class Profile {
     @Column
     private String hobby;
 
-    public Profile(User user, CreateProfileDTO createProfileDTO) {
+    public Profile(CreateProfileDTO createProfileDTO) {
         String birthYear = createProfileDTO.getBirthYear();
         String birthDay = createProfileDTO.getBirthDay();
         validBirth(birthYear, birthDay);
-        this.user = user;
         this.name = createProfileDTO.getName();
         this.birthYear = birthYear;
         this.birthDay = birthDay;
