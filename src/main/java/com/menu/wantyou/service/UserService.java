@@ -1,8 +1,10 @@
 package com.menu.wantyou.service;
 
 import com.menu.wantyou.domain.EmailVerifyToken;
+import com.menu.wantyou.domain.Profile;
 import com.menu.wantyou.domain.User;
 import com.menu.wantyou.dto.ChangeVerifyEmailDTO;
+import com.menu.wantyou.dto.CreateProfileDTO;
 import com.menu.wantyou.dto.SignUpDTO;
 import com.menu.wantyou.dto.UpdateUserDTO;
 import com.menu.wantyou.dto.admin.AdminUpdateUserDTO;
@@ -30,7 +32,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional(rollbackOn= {EmailSendException.class, IllegalArgumentException.class})
-    public User create(SignUpDTO signupDTO) throws ExistsValueException{
+    public User create(SignUpDTO signupDTO, CreateProfileDTO createProfileDTO) throws ExistsValueException{
         String username = signupDTO.getUsername();
         String email = signupDTO.getEmail();
 
@@ -41,6 +43,7 @@ public class UserService {
         signupDTO.setPassword(passwordEncoder.encode(signupDTO.getPassword()));
 
         User user = new User(signupDTO);
+        user.setProfile(new Profile(createProfileDTO));
         User savedUser = userRepository.save(user);
 
         // 인증토큰 생성 및 이메일 전송
