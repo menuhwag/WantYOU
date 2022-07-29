@@ -39,6 +39,10 @@ public class User extends TimestampsCreatedModified {
     @Column(nullable = false)
     private String nickname;
 
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @JoinColumn(name = "profile_id")
+    private Profile profile;
+
     @JsonIgnore
     @Column(nullable = false)
     private boolean enabled = true;
