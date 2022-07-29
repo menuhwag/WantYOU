@@ -47,7 +47,7 @@ public class UserController {
 
     @PostMapping(value = "/signup", produces = "application/json; charset=UTF-8")
     public ResponseEntity<?> signUp(@Valid @RequestBody SignUpDTO signupDTO) throws DuplicateKeyException {
-        return new ResponseEntity<>(userService.create(signupDTO), HttpStatus.CREATED);
+        return new ResponseEntity<>(userService.create(signupDTO.toCreateUserDTO(), signupDTO.toCreateProfileDTO()), HttpStatus.CREATED);
     }
 
     @PostMapping(value = "/signin", produces = "application/json; charset=UTF-8")

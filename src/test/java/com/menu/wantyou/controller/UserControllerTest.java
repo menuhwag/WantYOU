@@ -125,15 +125,26 @@ class UserControllerTest {
             private final String password = "passw0rd";
             private final String email = "jack01@gmail.com";
             private final String nickname = "jackson";
+            private final String name = "홍길동";
+            private final String birthYear = "2000";
+            private final String birthDay = "1223";
 
-            private final SignUpDTO signUpDTO = new SignUpDTO(username, password, email, nickname);
-            private final User user = new User(username, password, email, nickname);
+            private final SignUpDTO signUpDTO = SignUpDTO.builder()
+                                                        .username(username)
+                                                        .password(password)
+                                                        .email(email)
+                                                        .nickname(nickname)
+                                                        .name(name)
+                                                        .birthYear(birthYear)
+                                                        .birthDay(birthDay)
+                                                        .build();
+            private final User user = signUpDTO.toCreateUserDTO().toEntity();
 
             @Test
             @DisplayName("성공 시 ResponseEntity<User> 반환")
             void createUser() {
                 ResponseEntity<User> responseEntity = new ResponseEntity<>(user, HttpStatus.CREATED);
-                given(userService.create(any(SignUpDTO.class))).willReturn(user);
+                given(userService.create(any(SignUpDTO.CreateUserDTO.class), any(SignUpDTO.CreateProfileDTO.class))).willReturn(user);
 
                 ResponseEntity<?> result = userController.signUp(signUpDTO);
 
@@ -147,7 +158,7 @@ class UserControllerTest {
                 int status = 400;
                 String error = "Bad Request";
                 DuplicateKeyException exception = new DuplicateKeyException("이미 사용중인 아이디 또는 이메일입니다.");
-                given(userService.create(any(SignUpDTO.class))).willThrow(exception);
+                given(userService.create(any(SignUpDTO.CreateUserDTO.class), any(SignUpDTO.CreateProfileDTO.class))).willThrow(exception);
 
                 assertThrows(exception.getClass(), () -> userController.signUp(signUpDTO));
             }

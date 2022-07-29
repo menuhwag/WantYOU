@@ -62,11 +62,11 @@ public class User extends TimestampsCreatedModified {
         this.nickname = nickname;
     }
 
-    public User(SignUpDTO signUpDTO) {
-        this.username = signUpDTO.getUsername();
-        this.password = signUpDTO.getPassword();
-        this.email = signUpDTO.getEmail();
-        this.nickname = signUpDTO.getNickname();
+    public User(SignUpDTO.CreateUserDTO createUserDTO) {
+        this.username = createUserDTO.getUsername();
+        this.password = createUserDTO.getPassword();
+        this.email = createUserDTO.getEmail();
+        this.nickname = createUserDTO.getNickname();
     }
 
     public User update(UpdateUserDTO updateUserDTO) {

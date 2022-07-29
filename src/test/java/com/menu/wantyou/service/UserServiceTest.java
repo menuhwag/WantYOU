@@ -3,7 +3,6 @@ package com.menu.wantyou.service;
 import com.menu.wantyou.domain.EmailVerifyToken;
 import com.menu.wantyou.domain.Profile;
 import com.menu.wantyou.domain.User;
-import com.menu.wantyou.dto.CreateProfileDTO;
 import com.menu.wantyou.dto.SignUpDTO;
 import com.menu.wantyou.dto.UpdateUserDTO;
 import com.menu.wantyou.lib.exception.ExistsValueException;
@@ -49,11 +48,10 @@ class UserServiceTest {
     private final String password = "passw0rd";
     private final String email = "jack01@gmail.com";
     private final String nickname = "jackson";
-    private String name = "홍길동";
-    private String birthYear = "2000";
-    private String birthDay = "1223";
+    private final String name = "홍길동";
+    private final String birthYear = "2000";
+    private final String birthDay = "1223";
 
-    private CreateProfileDTO createProfileDTO;
     private SignUpDTO signupDTO;
     private User user;
     private User savedUser;
@@ -65,14 +63,17 @@ class UserServiceTest {
 
         @BeforeEach
         public void setUp() {
-            signupDTO = new SignUpDTO(username, password, email, nickname);
-            createProfileDTO = CreateProfileDTO.builder()
-                                                .name(name)
-                                                .birthYear(birthYear)
-                                                .birthDay(birthDay)
-                                                .build();
-            user = new User(signupDTO);
-            profile = new Profile(createProfileDTO);
+            signupDTO = SignUpDTO.builder()
+                                .username(username)
+                                .password(password)
+                                .email(email)
+                                .nickname(nickname)
+                                .name(name)
+                                .birthYear(birthYear)
+                                .birthDay(birthDay)
+                                .build();
+            user = signupDTO.toCreateUserDTO().toEntity();
+            profile = signupDTO.toCreateProfileDTO().toEntity();
             user.setProfile(profile);
         }
 
@@ -88,7 +89,7 @@ class UserServiceTest {
 
             //when
             try (MockedStatic<VerifyEmailSender> mockedStatic = mockStatic(VerifyEmailSender.class)) {
-                savedUser = userService.create(signupDTO, createProfileDTO);
+                savedUser = userService.create(signupDTO.toCreateUserDTO(), signupDTO.toCreateProfileDTO());
             }
 
             //then
@@ -104,7 +105,7 @@ class UserServiceTest {
             void throwsExceptionWhenExistsUsername() {
                 given(userRepository.existsByUsername(any(String.class))).willReturn(true);
 
-                assertThrows(ExistsValueException.class, () -> userService.create(signupDTO, createProfileDTO));
+                assertThrows(ExistsValueException.class, () -> userService.create(signupDTO.toCreateUserDTO(), signupDTO.toCreateProfileDTO()));
             }
 
             @Test
@@ -112,7 +113,7 @@ class UserServiceTest {
             void throwsExceptionWhenExistsEmail() {
                 given(userRepository.existsByEmail(any(String.class))).willReturn(true);
 
-                assertThrows(ExistsValueException.class, () -> userService.create(signupDTO, createProfileDTO));
+                assertThrows(ExistsValueException.class, () -> userService.create(signupDTO.toCreateUserDTO(), signupDTO.toCreateProfileDTO()));
             }
         }
     }
@@ -128,8 +129,13 @@ class UserServiceTest {
         @BeforeEach
         public void setUp() {
             updateUserDTO = new UpdateUserDTO(newPW, newEmail, newNickname);
-            signupDTO = new SignUpDTO(username, password, email, nickname);
-            user = new User(signupDTO);
+            SignUpDTO.CreateUserDTO createUserDTO = SignUpDTO.CreateUserDTO.builder()
+                                                                        .username(username)
+                                                                        .password(password)
+                                                                        .email(email)
+                                                                        .nickname(nickname)
+                                                                        .build();
+            user = createUserDTO.toEntity();
         }
 
         @Test

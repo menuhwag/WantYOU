@@ -1,10 +1,8 @@
 package com.menu.wantyou.service;
 
 import com.menu.wantyou.domain.EmailVerifyToken;
-import com.menu.wantyou.domain.Profile;
 import com.menu.wantyou.domain.User;
 import com.menu.wantyou.dto.ChangeVerifyEmailDTO;
-import com.menu.wantyou.dto.CreateProfileDTO;
 import com.menu.wantyou.dto.SignUpDTO;
 import com.menu.wantyou.dto.UpdateUserDTO;
 import com.menu.wantyou.dto.admin.AdminUpdateUserDTO;
@@ -32,18 +30,18 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional(rollbackOn= {EmailSendException.class, IllegalArgumentException.class})
-    public User create(SignUpDTO signupDTO, CreateProfileDTO createProfileDTO) throws ExistsValueException{
-        String username = signupDTO.getUsername();
-        String email = signupDTO.getEmail();
+    public User create(SignUpDTO.CreateUserDTO createUserDTO, SignUpDTO.CreateProfileDTO createProfileDTO) throws ExistsValueException{
+        String username = createUserDTO.getUsername();
+        String email = createUserDTO.getEmail();
 
         if (checkExistsUsername(username) || checkExistsEmail(email)) {
             throw new ExistsValueException("이미 사용중인 아이디 또는 이메일입니다.");
         }
 
-        signupDTO.setPassword(passwordEncoder.encode(signupDTO.getPassword()));
+        createUserDTO.setPassword(passwordEncoder.encode(createUserDTO.getPassword()));
 
-        User user = new User(signupDTO);
-        user.setProfile(new Profile(createProfileDTO));
+        User user = createUserDTO.toEntity();
+        user.setProfile(createProfileDTO.toEntity());
         User savedUser = userRepository.save(user);
 
         // 인증토큰 생성 및 이메일 전송

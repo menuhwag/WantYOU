@@ -2,7 +2,6 @@ package com.menu.wantyou.service;
 
 import com.menu.wantyou.domain.Profile;
 import com.menu.wantyou.domain.User;
-import com.menu.wantyou.dto.CreateProfileDTO;
 import com.menu.wantyou.dto.SignUpDTO;
 import com.menu.wantyou.dto.UpdateProfileDTO;
 import com.menu.wantyou.lib.exception.NotFoundException;
@@ -43,20 +42,22 @@ class ProfileServiceTest {
     private final String updateHobby = "영화";
     private final String updateName = "김첨지";
 
-    private CreateProfileDTO mockCreateProfileDTO;
     private User user;
 
     @BeforeEach
     public void setUp() {
-        mockCreateProfileDTO = CreateProfileDTO.builder()
-                                                .name(name)
-                                                .birthYear(birthYear)
-                                                .birthDay(birthDay)
-                                                .build();
+        SignUpDTO mockSignUpDTO = SignUpDTO.builder()
+                                            .username(username)
+                                            .password(password)
+                                            .email(email)
+                                            .nickname(nickname)
+                                            .name(name)
+                                            .birthYear(birthYear)
+                                            .birthDay(birthDay)
+                                            .build();
 
-        Profile mockProfile = new Profile(mockCreateProfileDTO);
-        SignUpDTO mockSignUpDTO = new SignUpDTO(username, password, email, nickname);
-        user = new User(mockSignUpDTO);
+        Profile mockProfile = mockSignUpDTO.toCreateProfileDTO().toEntity();
+        user = mockSignUpDTO.toCreateUserDTO().toEntity();
         user.setProfile(mockProfile);
     }
 
