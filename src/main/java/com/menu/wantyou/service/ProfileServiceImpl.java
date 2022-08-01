@@ -2,7 +2,7 @@ package com.menu.wantyou.service;
 
 import com.menu.wantyou.domain.Profile;
 import com.menu.wantyou.domain.User;
-import com.menu.wantyou.dto.UpdateProfileDTO;
+import com.menu.wantyou.dto.ProfileDTO;
 import com.menu.wantyou.lib.exception.NotFoundException;
 import com.menu.wantyou.repository.ProfileRepository;
 import com.menu.wantyou.repository.UserRepository;
@@ -21,7 +21,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public Profile update(String username, UpdateProfileDTO updateProfileDTO) throws NotFoundException{
+    public Profile update(String username, ProfileDTO.Update updateProfileDTO) throws NotFoundException{
         User user = findUserByUsername(username);
         return profileRepository.save(user.getProfile().update(updateProfileDTO));
     }

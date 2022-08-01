@@ -1,7 +1,7 @@
 package com.menu.wantyou.domain;
 
 import com.menu.wantyou.dto.UserDTO;
-import com.menu.wantyou.dto.UpdateProfileDTO;
+import com.menu.wantyou.dto.ProfileDTO;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -71,7 +71,7 @@ class ProfileTest {
         newHobby.add("축구");
         newHobby.add("영화");
 
-        UpdateProfileDTO updateProfileDTO = UpdateProfileDTO.builder()
+        ProfileDTO.Update updateProfileDTO = ProfileDTO.Update.builder()
                                                             .name(newName)
                                                             .birthYear(newYear)
                                                             .birthDay(newDay)
@@ -98,7 +98,7 @@ class ProfileTest {
         String newYear = "2001";
         String newDay = "1309";
 
-        UpdateProfileDTO updateProfileDTO = UpdateProfileDTO.builder()
+        ProfileDTO.Update updateProfileDTO = ProfileDTO.Update.builder()
                                                             .birthYear(newYear)
                                                             .birthDay(newDay)
                                                             .build();
@@ -123,7 +123,7 @@ class ProfileTest {
         String newYear = "2001";
         String newDay = "1009";
 
-        UpdateProfileDTO updateProfileDTO = UpdateProfileDTO.builder()
+        ProfileDTO.Update updateProfileDTO = ProfileDTO.Update.builder()
                 .name(newName)
                 .birthYear(newYear)
                 .birthDay(newDay)

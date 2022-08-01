@@ -1,7 +1,7 @@
 package com.menu.wantyou.domain;
 
 import com.menu.wantyou.dto.UserDTO;
-import com.menu.wantyou.dto.UpdateProfileDTO;
+import com.menu.wantyou.dto.ProfileDTO;
 import lombok.*;
 
 import javax.persistence.*;
@@ -43,7 +43,7 @@ public class Profile {
         this.hobby = parseHobby(createProfileDTO.getHobby());
     }
 
-    public Profile update(UpdateProfileDTO updateProfileDTO) {
+    public Profile update(ProfileDTO.Update updateProfileDTO) {
         String birthYear = updateProfileDTO.getBirthYear();
         String birthDay = updateProfileDTO.getBirthDay();
 
@@ -113,6 +113,7 @@ public class Profile {
     }
 
     private String parseHobby(List<String> hobby) {
+        if (hobby == null) return null;
         String parseString = "";
         for (int i = 0; i < hobby.size(); i ++) {
             parseString += hobby.get(i);
