@@ -1,7 +1,6 @@
 package com.menu.wantyou.domain;
 
-import com.menu.wantyou.dto.SignUpDTO;
-import com.menu.wantyou.dto.UpdateUserDTO;
+import com.menu.wantyou.dto.UserDTO;
 import com.menu.wantyou.lib.enumeration.Role;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,7 +33,7 @@ class UserTest {
         String update_password = "password";
         String update_email = "jack01@naver.com";
 
-        UpdateUserDTO updateUserDTO = new UpdateUserDTO();
+        UserDTO.Update updateUserDTO = new UserDTO.Update();
         updateUserDTO.setPassword(update_password);
         updateUserDTO.setEmail(update_email);
         user.update(updateUserDTO);

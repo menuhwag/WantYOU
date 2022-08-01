@@ -1,6 +1,6 @@
 package com.menu.wantyou.domain;
 
-import com.menu.wantyou.dto.SignUpDTO;
+import com.menu.wantyou.dto.UserDTO;
 import com.menu.wantyou.dto.UpdateProfileDTO;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +17,7 @@ class ProfileTest {
 
     @Test
     public void Create_Profile() {
-        SignUpDTO.CreateProfileDTO createProfileDTO = SignUpDTO.CreateProfileDTO.builder()
+        UserDTO.SignUp.CreateProfile createProfileDTO = UserDTO.SignUp.CreateProfile.builder()
                                                                                 .name(name)
                                                                                 .birthYear(year)
                                                                                 .birthDay(day)
@@ -37,13 +37,13 @@ class ProfileTest {
         String day1 = "1302";
         String day2 = "0230";
 
-        SignUpDTO.CreateProfileDTO createProfileDTO1 = SignUpDTO.CreateProfileDTO.builder()
+        UserDTO.SignUp.CreateProfile createProfileDTO1 = UserDTO.SignUp.CreateProfile.builder()
                                                                                 .name(name)
                                                                                 .birthYear(year)
                                                                                 .birthDay(day1)
                                                                                 .build();
 
-        SignUpDTO.CreateProfileDTO createProfileDTO2 = SignUpDTO.CreateProfileDTO.builder()
+        UserDTO.SignUp.CreateProfile createProfileDTO2 = UserDTO.SignUp.CreateProfile.builder()
                                                                                 .name(name)
                                                                                 .birthYear(year)
                                                                                 .birthDay(day2)
@@ -55,7 +55,7 @@ class ProfileTest {
 
     @Test
     public void Update_Profile() {
-        SignUpDTO.CreateProfileDTO createProfileDTO = SignUpDTO.CreateProfileDTO.builder()
+        UserDTO.SignUp.CreateProfile createProfileDTO = UserDTO.SignUp.CreateProfile.builder()
                                                                                 .name(name)
                                                                                 .birthYear(year)
                                                                                 .birthDay(day)
@@ -84,7 +84,7 @@ class ProfileTest {
 
     @Test
     public void When_Updating_BirthDay_is_Wrong() {
-        SignUpDTO.CreateProfileDTO createProfileDTO = SignUpDTO.CreateProfileDTO.builder()
+        UserDTO.SignUp.CreateProfile createProfileDTO = UserDTO.SignUp.CreateProfile.builder()
                                                                                 .name(name)
                                                                                 .birthYear(year)
                                                                                 .birthDay(day)

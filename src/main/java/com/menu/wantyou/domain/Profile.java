@@ -1,6 +1,6 @@
 package com.menu.wantyou.domain;
 
-import com.menu.wantyou.dto.SignUpDTO;
+import com.menu.wantyou.dto.UserDTO;
 import com.menu.wantyou.dto.UpdateProfileDTO;
 import lombok.*;
 
@@ -32,7 +32,7 @@ public class Profile {
     @Column
     private String hobby;
 
-    public Profile(SignUpDTO.CreateProfileDTO createProfileDTO) {
+    public Profile(UserDTO.SignUp.CreateProfile createProfileDTO) {
         String birthYear = createProfileDTO.getBirthYear();
         String birthDay = createProfileDTO.getBirthDay();
         validBirth(birthYear, birthDay);

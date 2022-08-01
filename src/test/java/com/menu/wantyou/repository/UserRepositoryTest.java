@@ -1,7 +1,7 @@
 package com.menu.wantyou.repository;
 
 import com.menu.wantyou.domain.User;
-import com.menu.wantyou.dto.SignUpDTO;
+import com.menu.wantyou.dto.UserDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -26,7 +26,7 @@ public class UserRepositoryTest {
     private final String name = "홍길동";
     private final String birthYear = "2000";
     private final String birthDay = "1223";
-    private final SignUpDTO signUpDTO = SignUpDTO.builder()
+    private final UserDTO.SignUp signUpDTO = UserDTO.SignUp.builder()
                                                 .username(username)
                                                 .password(password)
                                                 .email(email)

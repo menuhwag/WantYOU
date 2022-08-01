@@ -3,8 +3,7 @@ package com.menu.wantyou.service;
 import com.menu.wantyou.domain.EmailVerifyToken;
 import com.menu.wantyou.domain.Profile;
 import com.menu.wantyou.domain.User;
-import com.menu.wantyou.dto.SignUpDTO;
-import com.menu.wantyou.dto.UpdateUserDTO;
+import com.menu.wantyou.dto.UserDTO;
 import com.menu.wantyou.lib.exception.ExistsValueException;
 import com.menu.wantyou.lib.exception.NotFoundException;
 import com.menu.wantyou.lib.util.VerifyEmailSender;
@@ -52,7 +51,7 @@ class UserServiceTest {
     private final String birthYear = "2000";
     private final String birthDay = "1223";
 
-    private SignUpDTO signupDTO;
+    private UserDTO.SignUp signupDTO;
     private User user;
     private User savedUser;
     private Profile profile;
@@ -63,7 +62,7 @@ class UserServiceTest {
 
         @BeforeEach
         public void setUp() {
-            signupDTO = SignUpDTO.builder()
+            signupDTO = UserDTO.SignUp.builder()
                                 .username(username)
                                 .password(password)
                                 .email(email)
@@ -124,12 +123,12 @@ class UserServiceTest {
         String newPW = "12341234";
         String newEmail = "jack01@naver.com";
         String newNickname = "jacking";
-        private UpdateUserDTO updateUserDTO;
+        private UserDTO.Update updateUserDTO;
 
         @BeforeEach
         public void setUp() {
-            updateUserDTO = new UpdateUserDTO(newPW, newEmail, newNickname);
-            SignUpDTO.CreateUserDTO createUserDTO = SignUpDTO.CreateUserDTO.builder()
+            updateUserDTO = new UserDTO.Update(newPW, newEmail, newNickname);
+            UserDTO.SignUp.CreateUser createUserDTO = UserDTO.SignUp.CreateUser.builder()
                                                                         .username(username)
                                                                         .password(password)
                                                                         .email(email)

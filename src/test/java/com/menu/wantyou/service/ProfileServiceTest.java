@@ -2,7 +2,7 @@ package com.menu.wantyou.service;
 
 import com.menu.wantyou.domain.Profile;
 import com.menu.wantyou.domain.User;
-import com.menu.wantyou.dto.SignUpDTO;
+import com.menu.wantyou.dto.UserDTO;
 import com.menu.wantyou.dto.UpdateProfileDTO;
 import com.menu.wantyou.lib.exception.NotFoundException;
 import com.menu.wantyou.repository.ProfileRepository;
@@ -46,7 +46,7 @@ class ProfileServiceTest {
 
     @BeforeEach
     public void setUp() {
-        SignUpDTO mockSignUpDTO = SignUpDTO.builder()
+        UserDTO.SignUp mockSignUpDTO = UserDTO.SignUp.builder()
                                             .username(username)
                                             .password(password)
                                             .email(email)
