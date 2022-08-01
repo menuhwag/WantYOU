@@ -41,7 +41,7 @@ class ProfileRepositoryTest {
         assertEquals(name, savedProfile.getName());
         assertEquals(birthYear, savedProfile.getBirthYear());
         assertEquals(birthDay, savedProfile.getBirthDay());
-        assertEquals("", savedProfile.getHobby());
+        assertEquals(null, savedProfile.getHobby());
     }
 
     @Test

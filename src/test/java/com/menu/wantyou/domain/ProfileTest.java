@@ -4,6 +4,9 @@ import com.menu.wantyou.dto.UserDTO;
 import com.menu.wantyou.dto.UpdateProfileDTO;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class ProfileTest {
@@ -28,7 +31,7 @@ class ProfileTest {
         assertEquals(name, profile.getName());
         assertEquals(year, profile.getBirthYear());
         assertEquals(day, profile.getBirthDay());
-        assertEquals("", profile.getHobby());
+        assertEquals(null, profile.getHobby());
     }
 
     @Test
@@ -64,7 +67,9 @@ class ProfileTest {
         String newName = "김첨지";
         String newYear = "2001";
         String newDay = "1009";
-        String newHobby = "축구;영화";
+        List<String> newHobby = new ArrayList<>();
+        newHobby.add("축구");
+        newHobby.add("영화");
 
         UpdateProfileDTO updateProfileDTO = UpdateProfileDTO.builder()
                                                             .name(newName)
@@ -79,7 +84,7 @@ class ProfileTest {
         assertEquals(newName, updateProfile.getName());
         assertEquals(newYear, updateProfile.getBirthYear());
         assertEquals(newDay, updateProfile.getBirthDay());
-        assertEquals(newHobby, updateProfile.getHobby());
+        assertEquals("축구;영화", updateProfile.getHobby());
     }
 
     @Test
@@ -99,5 +104,37 @@ class ProfileTest {
                                                             .build();
 
         assertThrows(IllegalArgumentException.class, () -> profile.update(updateProfileDTO));
+    }
+
+    @Test
+    public void UpdateDTO에_없는_값들은_변경하지_않음() {
+        List<String> hobby = new ArrayList<>();
+        hobby.add("축구");
+        hobby.add("영화");
+
+        UserDTO.SignUp.CreateProfile createProfileDTO = UserDTO.SignUp.CreateProfile.builder()
+                                                                    .name(name)
+                                                                    .birthYear(year)
+                                                                    .birthDay(day)
+                                                                    .hobby(hobby)
+                                                                    .build();
+        Profile profile = createProfileDTO.toEntity();
+        String newName = "김첨지";
+        String newYear = "2001";
+        String newDay = "1009";
+
+        UpdateProfileDTO updateProfileDTO = UpdateProfileDTO.builder()
+                .name(newName)
+                .birthYear(newYear)
+                .birthDay(newDay)
+                .build();
+
+        Profile updateProfile =  profile.update(updateProfileDTO);
+
+        assertEquals(profile.getId(), updateProfile.getId());
+        assertEquals(newName, updateProfile.getName());
+        assertEquals(newYear, updateProfile.getBirthYear());
+        assertEquals(newDay, updateProfile.getBirthDay());
+        assertEquals("축구;영화", updateProfile.getHobby());
     }
 }

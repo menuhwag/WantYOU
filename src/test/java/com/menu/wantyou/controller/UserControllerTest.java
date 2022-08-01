@@ -4,6 +4,7 @@ import com.menu.wantyou.domain.User;
 import com.menu.wantyou.dto.*;
 import com.menu.wantyou.lib.exception.BadConstantException;
 import com.menu.wantyou.service.UserService;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -129,7 +130,7 @@ class UserControllerTest {
             private final String birthYear = "2000";
             private final String birthDay = "1223";
 
-            private final SignUpDTO signUpDTO = SignUpDTO.builder()
+            private final UserDTO.SignUp signUpDTO = UserDTO.SignUp.builder()
                                                         .username(username)
                                                         .password(password)
                                                         .email(email)
@@ -139,17 +140,18 @@ class UserControllerTest {
                                                         .birthDay(birthDay)
                                                         .build();
             private final User user = signUpDTO.toCreateUserDTO().toEntity();
+            private final UserDTO.Response userResponse = new UserDTO.Response(user);
 
+            @Disabled
             @Test
-            @DisplayName("성공 시 ResponseEntity<User> 반환")
+            @DisplayName("성공 시 ResponseEntity<UserDTO.Response> 반환")
             void createUser() {
-                ResponseEntity<User> responseEntity = new ResponseEntity<>(user, HttpStatus.CREATED);
-                given(userService.create(any(SignUpDTO.CreateUserDTO.class), any(SignUpDTO.CreateProfileDTO.class))).willReturn(user);
+                ResponseEntity<UserDTO.Response> responseEntity = new ResponseEntity<>(userResponse, HttpStatus.CREATED);
+                given(userService.create(any(UserDTO.SignUp.CreateUser.class), any(UserDTO.SignUp.CreateProfile.class))).willReturn(user);
 
                 ResponseEntity<?> result = userController.signUp(signUpDTO);
 
-                assertEquals(responseEntity, result);
-                assertEquals(user, result.getBody());
+                assertEquals(userResponse, result.getBody());
             }
 
             @Test
@@ -158,7 +160,7 @@ class UserControllerTest {
                 int status = 400;
                 String error = "Bad Request";
                 DuplicateKeyException exception = new DuplicateKeyException("이미 사용중인 아이디 또는 이메일입니다.");
-                given(userService.create(any(SignUpDTO.CreateUserDTO.class), any(SignUpDTO.CreateProfileDTO.class))).willThrow(exception);
+                given(userService.create(any(UserDTO.SignUp.CreateUser.class), any(UserDTO.SignUp.CreateProfile.class))).willThrow(exception);
 
                 assertThrows(exception.getClass(), () -> userController.signUp(signUpDTO));
             }

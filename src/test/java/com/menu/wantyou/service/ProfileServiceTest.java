@@ -14,6 +14,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,13 +41,14 @@ class ProfileServiceTest {
     private final String name = "홍길동";
     private final String birthYear = "2000";
     private final String birthDay = "1223";
-    private final String updateHobby = "영화";
+    private final List<String> updateHobby = new ArrayList<>();
     private final String updateName = "김첨지";
 
     private User user;
 
     @BeforeEach
     public void setUp() {
+        updateHobby.add("영화");
         UserDTO.SignUp mockSignUpDTO = UserDTO.SignUp.builder()
                                             .username(username)
                                             .password(password)
@@ -71,7 +74,7 @@ class ProfileServiceTest {
         assertEquals(name, findProfile.getName());
         assertEquals(birthYear, findProfile.getBirthYear());
         assertEquals(birthDay, findProfile.getBirthDay());
-        assertEquals("", findProfile.getHobby());
+        assertEquals(null, findProfile.getHobby());
     }
 
     @Test
@@ -96,6 +99,6 @@ class ProfileServiceTest {
         assertEquals(birthYear, result.getBirthYear());
         assertEquals(birthDay, result.getBirthDay());
         assertEquals(updateName, result.getName());
-        assertEquals(updateHobby, result.getHobby());
+        assertEquals("영화", result.getHobby());
     }
 }
