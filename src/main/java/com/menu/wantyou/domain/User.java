@@ -1,8 +1,7 @@
 package com.menu.wantyou.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.menu.wantyou.dto.SignUpDTO;
-import com.menu.wantyou.dto.UpdateUserDTO;
+import com.menu.wantyou.dto.UserDTO;
 import com.menu.wantyou.dto.admin.AdminUpdateUserDTO;
 import com.menu.wantyou.lib.enumeration.Role;
 import lombok.Getter;
@@ -62,14 +61,14 @@ public class User extends TimestampsCreatedModified {
         this.nickname = nickname;
     }
 
-    public User(SignUpDTO.CreateUserDTO createUserDTO) {
+    public User(UserDTO.SignUp.CreateUser createUserDTO) {
         this.username = createUserDTO.getUsername();
         this.password = createUserDTO.getPassword();
         this.email = createUserDTO.getEmail();
         this.nickname = createUserDTO.getNickname();
     }
 
-    public User update(UpdateUserDTO updateUserDTO) {
+    public User update(UserDTO.Update updateUserDTO) {
         String password = updateUserDTO.getPassword();
         String email = updateUserDTO.getEmail();
         String nickname = updateUserDTO.getNickname();
