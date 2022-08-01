@@ -8,6 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -39,7 +40,7 @@ public class Profile {
         this.name = createProfileDTO.getName();
         this.birthYear = birthYear;
         this.birthDay = birthDay;
-        this.hobby = createProfileDTO.getHobby();
+        this.hobby = parseHobby(createProfileDTO.getHobby());
     }
 
     public Profile update(UpdateProfileDTO updateProfileDTO) {
@@ -67,8 +68,10 @@ public class Profile {
         if (day != null) this.birthDay = day;
     }
 
-    private void updateHobby(String hobby) {
-        if (hobby != null) this.hobby = hobby;
+    private void updateHobby(List<String> hobby) {
+        if (hobby == null || hobby.size() == 0) return;
+        String hobbyToStr = parseHobby(hobby);
+        this.hobby = hobbyToStr;
     }
 
     private void validBirth(String birthYear, String birthDay) throws IllegalArgumentException{
@@ -107,5 +110,14 @@ public class Profile {
 
     private String parseDay(String birthDay) {
         return birthDay.substring(2);
+    }
+
+    private String parseHobby(List<String> hobby) {
+        String parseString = "";
+        for (int i = 0; i < hobby.size(); i ++) {
+            parseString += hobby.get(i);
+            if (i != hobby.size() - 1) parseString += ";";
+        }
+        return parseString;
     }
 }
