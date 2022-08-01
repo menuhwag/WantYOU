@@ -7,7 +7,6 @@ import lombok.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
 import java.util.List;
 
 public class UserDTO {
@@ -116,8 +115,7 @@ public class UserDTO {
             @Size(min = 4, max = 4)
             private String birthDay;
 
-            @Builder.Default
-            private String hobby = "";
+            private List<String> hobby;
 
             public Profile toEntity() {
                 return new Profile(this);

@@ -3,6 +3,7 @@ package com.menu.wantyou.dto;
 import lombok.*;
 
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Getter
 @Builder
@@ -16,5 +17,5 @@ public class UpdateProfileDTO {
     @Size(min = 4, max = 4)
     private String birthDay;
 
-    private String hobby;
+    private List<String> hobby;
 }

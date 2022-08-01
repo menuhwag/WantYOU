@@ -19,6 +19,6 @@ public class ProfileResponseDTO {
         this.birthYear = Integer.parseInt(profile.getBirthYear());
         this.birthMonth = Integer.parseInt(profile.getBirthDay().substring(0,2));
         this.birthDay = Integer.parseInt(profile.getBirthDay().substring(2));
-        this.hobby = Arrays.asList(profile.getHobby().split(";"));
+        if (profile.getHobby() != null) this.hobby = Arrays.asList(profile.getHobby().split(";"));
     }
 }
