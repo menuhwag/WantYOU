@@ -1,18 +1,16 @@
 package com.menu.wantyou.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.menu.wantyou.dto.UserDTO;
-import com.menu.wantyou.dto.admin.AdminUpdateUserDTO;
 import com.menu.wantyou.lib.enumeration.Role;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "users")
 @Entity
@@ -43,50 +41,17 @@ public class User extends TimestampsCreatedModified {
     private Profile profile;
 
     @JsonIgnore
+    @Builder.Default
     @Column(nullable = false)
     private boolean enabled = true;
 
     @JsonIgnore
+    @Builder.Default
     @Column(nullable = false)
     private boolean authEmail = false;
 
     @Column(nullable = false)
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
-
-    public User(String username, String password, String email, String nickname) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.nickname = nickname;
-    }
-
-    public User(UserDTO.SignUp.CreateUser createUserDTO) {
-        this.username = createUserDTO.getUsername();
-        this.password = createUserDTO.getPassword();
-        this.email = createUserDTO.getEmail();
-        this.nickname = createUserDTO.getNickname();
-    }
-
-    public User update(UserDTO.Update updateUserDTO) {
-        String password = updateUserDTO.getPassword();
-        String email = updateUserDTO.getEmail();
-        String nickname = updateUserDTO.getNickname();
-
-        if (password != null) setPassword(password);
-        if (email != null) setEmail(email);
-        if (nickname != null) setNickname(nickname);
-
-        return this;
-    }
-
-    public User update(AdminUpdateUserDTO updateUserDTO) {
-        Boolean enabled = updateUserDTO.getEnabled();
-        Role role = updateUserDTO.getRole();
-
-        if (enabled != null) setEnabled(enabled);
-        if (role != null) setRole(role);
-
-        return this;
-    }
 }
