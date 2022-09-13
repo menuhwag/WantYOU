@@ -127,7 +127,11 @@ class UserServiceTest {
 
         @BeforeEach
         public void setUp() {
-            updateUserDTO = new UserDTO.Update(newPW, newEmail, newNickname);
+            updateUserDTO = UserDTO.Update.builder()
+                                .password(newPW)
+                                .email(newEmail)
+                                .nickname(newNickname)
+                                .build();
             UserDTO.SignUp.CreateUser createUserDTO = UserDTO.SignUp.CreateUser.builder()
                                                                         .username(username)
                                                                         .password(password)
@@ -143,7 +147,6 @@ class UserServiceTest {
 
             given(userRepository.findByUsername(any(String.class))).willReturn(Optional.of(user));
             given(passwordEncoder.encode(any(String.class))).willReturn(newPW);
-            given(userRepository.save(any(User.class))).willReturn(user.update(updateUserDTO));
 
             User updateUser = userService.update(username, updateUserDTO);
 

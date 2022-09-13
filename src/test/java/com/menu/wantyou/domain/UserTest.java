@@ -16,27 +16,40 @@ class UserTest {
 
     @Test
     public void createUser() {
-        User user = new User(username, password, email, nickname);
+        User user = User.builder()
+                        .username(username)
+                        .password(password)
+                        .email(email)
+                        .nickname(nickname)
+                        .build();
 
         assertNull(user.getId());
-        assertEquals(user.getRole(), Role.USER);
+        assertEquals(Role.USER, user.getRole());
         assertTrue(user.isEnabled());
-        assertEquals(user.getUsername(), username);
-        assertEquals(user.getPassword(), password);
-        assertEquals(user.getEmail(), email);
-        assertEquals(user.getNickname(), nickname);
+        assertEquals(username, user.getUsername());
+        assertEquals(password, user.getPassword());
+        assertEquals(email, user.getEmail());
+        assertEquals(nickname, user.getNickname());
     }
     @Test
     public void updateUser() {
-        User user = new User(username, password, email, nickname);
+        User user = User.builder()
+                .username(username)
+                .password(password)
+                .email(email)
+                .nickname(nickname)
+                .build();
 
         String update_password = "password";
         String update_email = "jack01@naver.com";
 
-        UserDTO.Update updateUserDTO = new UserDTO.Update();
-        updateUserDTO.setPassword(update_password);
-        updateUserDTO.setEmail(update_email);
-        user.update(updateUserDTO);
+        UserDTO.Update updateUserDTO = UserDTO.Update.builder()
+                                            .password(update_password)
+                                            .email(update_email)
+                                            .build();
+
+        user.setPassword(updateUserDTO.getPassword());
+        user.setEmail(updateUserDTO.getEmail());
 
         assertNull(user.getId());
         assertEquals(user.getUsername(), username);
