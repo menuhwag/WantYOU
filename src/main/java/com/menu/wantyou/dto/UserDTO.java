@@ -97,7 +97,12 @@ public class UserDTO {
             private String nickname;
 
             public User toEntity() {
-                return new User(this);
+                return User.builder()
+                        .username(username)
+                        .password(password)
+                        .email(email)
+                        .nickname(nickname)
+                        .build();
             }
         }
 
@@ -124,7 +129,7 @@ public class UserDTO {
     }
 
     @Getter
-    @Setter
+    @Builder
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Update {

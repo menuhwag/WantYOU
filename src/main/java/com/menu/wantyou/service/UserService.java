@@ -61,11 +61,13 @@ public class UserService {
         return userRepository.findByUsername(username).orElseThrow(() -> new NotFoundException("Not Found the User"));
     }
 
+    @Transactional
     public User update(String username,UserDTO.Update updateUserDTO) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundException("해당 유저 정보를 찾을 수 없습니다."));
-        if (updateUserDTO.getPassword() != null) updateUserDTO.setPassword(passwordEncoder.encode(updateUserDTO.getPassword()));
-        user.update(updateUserDTO);
-        return userRepository.save(user);
+        if (updateUserDTO.getPassword() != null) user.setPassword(passwordEncoder.encode(updateUserDTO.getPassword()));
+        if (updateUserDTO.getEmail() != null) user.setEmail(updateUserDTO.getEmail());
+        if (updateUserDTO.getNickname() != null) user.setNickname(updateUserDTO.getNickname());
+        return user;
     }
 
     public void delete(String username) {
@@ -80,7 +82,6 @@ public class UserService {
         // 값이 있으면, return 값의 유저의 authEmail true 로 수정
         User user = emailVerify.getUser();
         user.setAuthEmail(true);
-        userRepository.save(user);
         // 인증완료된 토큰 삭제
         emailVerifyTokenRepository.delete(emailVerify);
     }
@@ -95,7 +96,6 @@ public class UserService {
         if (!passwordEncoder.matches(password, user.getPassword())) throw new UnauthorizedException("비밀번호를 확인해주세요.");
 
         user.setEmail(email);
-        userRepository.save(user);
 
         String uuid = UUID.randomUUID().toString();
         EmailVerifyToken emailVerifyToken;
@@ -104,17 +104,19 @@ public class UserService {
             emailVerifyToken.setToken(uuid);
         } else {
             emailVerifyToken = new EmailVerifyToken(user, uuid);
+            emailVerifyTokenRepository.save(emailVerifyToken);
         }
-        emailVerifyTokenRepository.save(emailVerifyToken);
 
         VerifyEmailSender.sendVerifyCode(email, uuid);
     }
 
+    @Transactional
     public User updateEnableAndRole(AdminUpdateUserDTO adminUpdateUserDTO) {
         String username = adminUpdateUserDTO.getUsername();
         User user = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundException("해당 유저 정보를 찾을 수 없습니다."));
-        user.update(adminUpdateUserDTO);
-        return userRepository.save(user);
+        if (adminUpdateUserDTO.getEnabled() != null) user.setEnabled(adminUpdateUserDTO.getEnabled());
+        if (adminUpdateUserDTO.getRole() != null) user.setRole(adminUpdateUserDTO.getRole());
+        return user;
     }
 
     public boolean checkExistsUsername(String username) {
