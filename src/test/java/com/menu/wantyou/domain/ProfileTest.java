@@ -78,13 +78,15 @@ class ProfileTest {
                                                             .hobby(newHobby)
                                                             .build();
 
-        Profile updateProfile =  profile.update(updateProfileDTO);
+        profile.updateName(updateProfileDTO.getName());
+        profile.updateBirthYear(updateProfileDTO.getBirthYear());
+        profile.updateBirthDay(updateProfileDTO.getBirthDay());
+        profile.updateHobby(updateProfileDTO.getHobby());
 
-        assertEquals(profile.getId(), updateProfile.getId());
-        assertEquals(newName, updateProfile.getName());
-        assertEquals(newYear, updateProfile.getBirthYear());
-        assertEquals(newDay, updateProfile.getBirthDay());
-        assertEquals("축구;영화", updateProfile.getHobby());
+        assertEquals(newName, profile.getName());
+        assertEquals(newYear, profile.getBirthYear());
+        assertEquals(newDay, profile.getBirthDay());
+        assertEquals("축구;영화", profile.getHobby());
     }
 
     @Test
@@ -103,38 +105,9 @@ class ProfileTest {
                                                             .birthDay(newDay)
                                                             .build();
 
-        assertThrows(IllegalArgumentException.class, () -> profile.update(updateProfileDTO));
-    }
-
-    @Test
-    public void UpdateDTO에_없는_값들은_변경하지_않음() {
-        List<String> hobby = new ArrayList<>();
-        hobby.add("축구");
-        hobby.add("영화");
-
-        UserDTO.SignUp.CreateProfile createProfileDTO = UserDTO.SignUp.CreateProfile.builder()
-                                                                    .name(name)
-                                                                    .birthYear(year)
-                                                                    .birthDay(day)
-                                                                    .hobby(hobby)
-                                                                    .build();
-        Profile profile = createProfileDTO.toEntity();
-        String newName = "김첨지";
-        String newYear = "2001";
-        String newDay = "1009";
-
-        ProfileDTO.Update updateProfileDTO = ProfileDTO.Update.builder()
-                .name(newName)
-                .birthYear(newYear)
-                .birthDay(newDay)
-                .build();
-
-        Profile updateProfile =  profile.update(updateProfileDTO);
-
-        assertEquals(profile.getId(), updateProfile.getId());
-        assertEquals(newName, updateProfile.getName());
-        assertEquals(newYear, updateProfile.getBirthYear());
-        assertEquals(newDay, updateProfile.getBirthDay());
-        assertEquals("축구;영화", updateProfile.getHobby());
+        assertThrows(IllegalArgumentException.class, () -> {
+            profile.updateBirthYear(updateProfileDTO.getBirthYear());
+            profile.updateBirthDay(updateProfileDTO.getBirthDay());
+        });
     }
 }

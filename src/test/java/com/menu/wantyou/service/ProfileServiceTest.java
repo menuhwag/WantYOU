@@ -28,9 +28,6 @@ class ProfileServiceTest {
     @Mock
     private UserRepository userRepository;
 
-    @Mock
-    private ProfileRepository profileRepository;
-
     @InjectMocks
     private ProfileServiceImpl profileService;
 
@@ -90,10 +87,8 @@ class ProfileServiceTest {
                                                                 .name(updateName)
                                                                 .hobby(updateHobby)
                                                                 .build();
-        Profile updateProfile = user.getProfile().update(mockUpdateProfileDTO);
         //when
         when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(user));
-        when(profileRepository.save(any(Profile.class))).thenReturn(updateProfile);
         Profile result = profileService.update(username, mockUpdateProfileDTO);
         //then
         assertEquals(birthYear, result.getBirthYear());
