@@ -43,32 +43,21 @@ public class Profile {
         this.hobby = parseHobby(createProfileDTO.getHobby());
     }
 
-    public Profile update(ProfileDTO.Update updateProfileDTO) {
-        String birthYear = updateProfileDTO.getBirthYear();
-        String birthDay = updateProfileDTO.getBirthDay();
-
-        validBirth(birthYear, birthDay);
-
-        updateName(updateProfileDTO.getName());
-        updateBirthYear(birthYear);
-        updateBirthDay(birthDay);
-        updateHobby(updateProfileDTO.getHobby());
-
-        return this;
-    }
-    private void updateName(String name) {
-        if (name != null) this.name = name;
+    public void updateName(String name) {
+        this.name = name;
     }
 
-    private void updateBirthYear(String year) {
-        if (year != null) this.birthYear = year;
+    public void updateBirthYear(String year) {
+        validBirth(year, this.birthDay);
+        this.birthYear = year;
     }
 
-    private void updateBirthDay(String day) {
-        if (day != null) this.birthDay = day;
+    public void updateBirthDay(String day) {
+        validBirth(this.birthYear, day);
+        this.birthDay = day;
     }
 
-    private void updateHobby(List<String> hobby) {
+    public void updateHobby(List<String> hobby) {
         if (hobby == null || hobby.size() == 0) return;
         String hobbyToStr = parseHobby(hobby);
         this.hobby = hobbyToStr;
@@ -114,11 +103,6 @@ public class Profile {
 
     private String parseHobby(List<String> hobby) {
         if (hobby == null) return null;
-        String parseString = "";
-        for (int i = 0; i < hobby.size(); i ++) {
-            parseString += hobby.get(i);
-            if (i != hobby.size() - 1) parseString += ";";
-        }
-        return parseString;
+        return String.join(";", hobby);
     }
 }
