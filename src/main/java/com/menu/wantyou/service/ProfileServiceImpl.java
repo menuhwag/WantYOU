@@ -9,6 +9,8 @@ import com.menu.wantyou.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @RequiredArgsConstructor
 @Service
 public class ProfileServiceImpl implements ProfileService {
@@ -21,9 +23,14 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
+    @Transactional
     public Profile update(String username, ProfileDTO.Update updateProfileDTO) throws NotFoundException{
-        User user = findUserByUsername(username);
-        return profileRepository.save(user.getProfile().update(updateProfileDTO));
+        Profile profile = findByUsername(username);
+        if (updateProfileDTO.getName() != null) profile.updateName(updateProfileDTO.getName());
+        if (updateProfileDTO.getBirthYear() != null) profile.updateBirthYear(updateProfileDTO.getBirthYear());
+        if (updateProfileDTO.getBirthDay() != null) profile.updateBirthDay(updateProfileDTO.getBirthDay());
+        if (updateProfileDTO.getHobby() != null) profile.updateHobby(updateProfileDTO.getHobby());
+        return profile;
     }
 
     private User findUserByUsername(String username) throws NotFoundException{
