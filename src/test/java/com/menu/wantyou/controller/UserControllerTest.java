@@ -2,31 +2,50 @@ package com.menu.wantyou.controller;
 
 import com.menu.wantyou.domain.User;
 import com.menu.wantyou.dto.*;
-import com.menu.wantyou.lib.exception.BadConstantException;
+import com.menu.wantyou.lib.exception.ExistsValueException;
+import com.menu.wantyou.lib.util.jwt.JwtTokenProvider;
 import com.menu.wantyou.service.UserService;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.dao.DuplicateKeyException;
+import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(MockitoExtension.class)
+@WebMvcTest(UserController.class)
+@MockBean(JpaMetamodelMappingContext.class)
 class UserControllerTest {
-    @Mock
-    private UserService userService;
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private WebApplicationContext webApplicationContext;
 
-    @InjectMocks
-    private UserController userController;
+    @MockBean
+    private UserService userService;
+    @MockBean
+    private JwtTokenProvider jwtTokenProvider;
+    @MockBean
+    private AuthenticationManagerBuilder authenticationManagerBuilder;
+
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
+                .build();
+    }
 
     @Nested
     @DisplayName("/exists")
@@ -42,32 +61,32 @@ class UserControllerTest {
 
                 @Test
                 @DisplayName("이미 존재할 시 checkExistsDTO.exists true 반환")
-                void checkExistsTrue() {
+                void checkExistsTrue() throws Exception {
                     boolean exists = true;
                     given(userService.checkExistsUsername(any(String.class))).willReturn(exists);
 
-                    ResponseEntity<CheckExistsDTO> responseEntity = userController.checkExists(key, value);
-
-                    CheckExistsDTO responseBody = responseEntity.getBody();
-                    assertEquals(key.toUpperCase(), responseBody.getKey().name());
-                    assertEquals(value, responseBody.getValue());
-                    assertEquals(exists, responseBody.isExists());
-                    assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+                    mockMvc.perform(get("/auth/exists").param("key", key).param("value", value))
+                            .andDo(print())
+                            .andExpect(status().isOk())
+                            .andExpect(jsonPath("$.key").exists())
+                            .andExpect(jsonPath("$.value").exists())
+                            .andExpect(jsonPath("$.exists").exists())
+                            .andExpect(jsonPath("$.exists").value(exists));
                 }
 
                 @Test
                 @DisplayName("존재하지 않을 시 checkExistsDTO.exists false 반환")
-                void checkExistsFalse() {
+                void checkExistsFalse() throws Exception {
                     boolean exists = false;
                     given(userService.checkExistsUsername(any(String.class))).willReturn(exists);
 
-                    ResponseEntity<CheckExistsDTO> responseEntity = userController.checkExists(key, value);
-
-                    CheckExistsDTO responseBody = responseEntity.getBody();
-                    assertEquals(key.toUpperCase(), responseBody.getKey().name());
-                    assertEquals(value, responseBody.getValue());
-                    assertEquals(exists, responseBody.isExists());
-                    assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+                    mockMvc.perform(get("/auth/exists").param("key", key).param("value", value))
+                            .andDo(print())
+                            .andExpect(status().isOk())
+                            .andExpect(jsonPath("$.key").exists())
+                            .andExpect(jsonPath("$.value").exists())
+                            .andExpect(jsonPath("$.exists").exists())
+                            .andExpect(jsonPath("$.exists").value(exists));
                 }
             }
             @Nested
@@ -78,41 +97,47 @@ class UserControllerTest {
 
                 @Test
                 @DisplayName("이미 존재할 시 checkExistsDTO.exists true 반환")
-                void checkExistsTrue() {
+                void checkExistsTrue() throws Exception {
                     boolean exists = true;
                     given(userService.checkExistsEmail(any(String.class))).willReturn(exists);
 
-                    ResponseEntity<CheckExistsDTO> responseEntity = userController.checkExists(key, value);
-
-                    CheckExistsDTO responseBody = responseEntity.getBody();
-                    assertEquals(key.toUpperCase(), responseBody.getKey().name());
-                    assertEquals(value, responseBody.getValue());
-                    assertEquals(exists, responseBody.isExists());
-                    assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+                    mockMvc.perform(get("/auth/exists").param("key", key).param("value", value))
+                            .andDo(print())
+                            .andExpect(status().isOk())
+                            .andExpect(jsonPath("$.key").exists())
+                            .andExpect(jsonPath("$.value").exists())
+                            .andExpect(jsonPath("$.exists").exists())
+                            .andExpect(jsonPath("$.exists").value(exists));
                 }
 
                 @Test
                 @DisplayName("존재하지 않을 시 checkExistsDTO.exists false 반환")
-                void checkExistsFalse() {
+                void checkExistsFalse() throws Exception {
                     boolean exists = false;
                     given(userService.checkExistsEmail(any(String.class))).willReturn(exists);
 
-                    ResponseEntity<CheckExistsDTO> responseEntity = userController.checkExists(key, value);
-
-                    CheckExistsDTO responseBody = responseEntity.getBody();
-                    assertEquals(key.toUpperCase(), responseBody.getKey().name());
-                    assertEquals(value, responseBody.getValue());
-                    assertEquals(exists, responseBody.isExists());
-                    assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+                    mockMvc.perform(get("/auth/exists").param("key", key).param("value", value))
+                            .andDo(print())
+                            .andExpect(status().isOk())
+                            .andExpect(jsonPath("$.key").exists())
+                            .andExpect(jsonPath("$.value").exists())
+                            .andExpect(jsonPath("$.exists").exists())
+                            .andExpect(jsonPath("$.exists").value(exists));
                 }
             }
             @Test
             @DisplayName("잘못된 키값 전달시 IllegalArgumentException 예외 발생")
-            void trowsBadConstantException() {
+            void trowsBadConstantException() throws Exception {
                 String key = "nickname";
                 String value = "jackson";
 
-                assertThrows(BadConstantException.class, () -> userController.checkExists(key, value));
+                mockMvc.perform(get("/auth/exists").param("key", key).param("value", value))
+                        .andDo(print())
+                        .andExpect(status().isBadRequest())
+                        .andExpect(jsonPath("$.timestamp").exists())
+                        .andExpect(jsonPath("$.status").exists())
+                        .andExpect(jsonPath("$.error").exists())
+                        .andExpect(jsonPath("$.message").exists());
             }
         }
     }
@@ -142,27 +167,59 @@ class UserControllerTest {
             private final User user = signUpDTO.toCreateUserDTO().toEntity();
             private final UserDTO.Response userResponse = new UserDTO.Response(user);
 
-            @Disabled
             @Test
             @DisplayName("성공 시 ResponseEntity<UserDTO.Response> 반환")
-            void createUser() {
+            void createUser() throws Exception {
                 ResponseEntity<UserDTO.Response> responseEntity = new ResponseEntity<>(userResponse, HttpStatus.CREATED);
                 given(userService.create(any(UserDTO.SignUp.CreateUser.class), any(UserDTO.SignUp.CreateProfile.class))).willReturn(user);
 
-                ResponseEntity<?> result = userController.signUp(signUpDTO);
-
-                assertEquals(userResponse, result.getBody());
+                mockMvc.perform(
+                        post("/auth/signup")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .characterEncoding("utf-8")
+                                .content("{" +
+                                        "\"username\" : \"" + username + "\"," +
+                                        "\"password\" : \"" + password + "\"," +
+                                        "\"email\" : \"" + email + "\"," +
+                                        "\"nickname\" : \"" + nickname + "\"," +
+                                        "\"name\" : \"" + name + "\"," +
+                                        "\"birthYear\" : \"" + birthYear + "\"," +
+                                        "\"birthDay\" : \"" + birthDay + "\"" +
+                                        "}")
+                                .accept(MediaType.APPLICATION_JSON))
+                        .andDo(print())
+                        .andExpect(status().isCreated())
+                        .andExpect(jsonPath("$.username").exists())
+                        .andExpect(jsonPath("$.email").exists())
+                        .andExpect(jsonPath("$.nickname").exists());
             }
 
             @Test
             @DisplayName("유저정보 중복시 DuplicateKeyException 예외 발생")
-            void existsKey() {
-                int status = 400;
-                String error = "Bad Request";
-                DuplicateKeyException exception = new DuplicateKeyException("이미 사용중인 아이디 또는 이메일입니다.");
+            void existsKey() throws Exception {
+                ExistsValueException exception = new ExistsValueException("이미 사용중인 아이디 또는 이메일입니다.");
                 given(userService.create(any(UserDTO.SignUp.CreateUser.class), any(UserDTO.SignUp.CreateProfile.class))).willThrow(exception);
 
-                assertThrows(exception.getClass(), () -> userController.signUp(signUpDTO));
+                mockMvc.perform(
+                                post("/auth/signup")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .characterEncoding("utf-8")
+                                        .content("{" +
+                                                "\"username\" : \"" + username + "\"," +
+                                                "\"password\" : \"" + password + "\"," +
+                                                "\"email\" : \"" + email + "\"," +
+                                                "\"nickname\" : \"" + nickname + "\"," +
+                                                "\"name\" : \"" + name + "\"," +
+                                                "\"birthYear\" : \"" + birthYear + "\"," +
+                                                "\"birthDay\" : \"" + birthDay + "\"" +
+                                                "}")
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andDo(print())
+                        .andExpect(status().isBadRequest())
+                        .andExpect(jsonPath("$.timestamp").exists())
+                        .andExpect(jsonPath("$.status").exists())
+                        .andExpect(jsonPath("$.error").exists())
+                        .andExpect(jsonPath("$.message").exists());
             }
         }
     }
