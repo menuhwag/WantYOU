@@ -1,6 +1,7 @@
 package com.menu.wantyou.dto.profile;
 
 import com.menu.wantyou.domain.Profile;
+import com.menu.wantyou.lib.util.DateValidator;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,11 +23,12 @@ public class ProfileReqDTO {
     private List<String> hobby;
 
     public Profile toEntity() {
+        DateValidator.valid(birthYear, birthDay);
         return Profile.builder()
                 .name(this.name)
                 .birthYear(this.birthYear)
                 .birthDay(this.birthDay)
-                .hobby(String.join(";", this.hobby))
+                .hobby((hobby == null) ? null : String.join(";", this.hobby))
                 .build();
     }
 }

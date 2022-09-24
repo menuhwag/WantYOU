@@ -2,10 +2,10 @@ package com.menu.wantyou.service;
 
 import com.menu.wantyou.domain.Profile;
 import com.menu.wantyou.domain.User;
-import com.menu.wantyou.dto.UserDTO;
-import com.menu.wantyou.dto.ProfileDTO;
+import com.menu.wantyou.dto.SignUpDTO;
+import com.menu.wantyou.dto.profile.ProfileReqDTO;
+import com.menu.wantyou.dto.user.UserSignUpDTO;
 import com.menu.wantyou.lib.exception.NotFoundException;
-import com.menu.wantyou.repository.ProfileRepository;
 import com.menu.wantyou.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,18 +46,25 @@ class ProfileServiceTest {
     @BeforeEach
     public void setUp() {
         updateHobby.add("영화");
-        UserDTO.SignUp mockSignUpDTO = UserDTO.SignUp.builder()
-                                            .username(username)
-                                            .password(password)
-                                            .email(email)
-                                            .nickname(nickname)
-                                            .name(name)
-                                            .birthYear(birthYear)
-                                            .birthDay(birthDay)
+        UserSignUpDTO userSignUpDTO = UserSignUpDTO.builder()
+                                                    .username(username)
+                                                    .password(password)
+                                                    .email(email)
+                                                    .nickname(nickname)
+                                                    .build();
+
+        ProfileReqDTO profileReqDTO = ProfileReqDTO.builder()
+                                                    .name(name)
+                                                    .birthYear(birthYear)
+                                                    .birthDay(birthDay)
+                                                    .build();
+        SignUpDTO mockSignUpDTO = SignUpDTO.builder()
+                                            .user(userSignUpDTO)
+                                            .profile(profileReqDTO)
                                             .build();
 
-        Profile mockProfile = mockSignUpDTO.toCreateProfileDTO().toEntity();
-        user = mockSignUpDTO.toCreateUserDTO().toEntity();
+        Profile mockProfile = mockSignUpDTO.getProfile().toEntity();
+        user = mockSignUpDTO.getUser().toEntity();
         user.setProfile(mockProfile);
     }
 
@@ -83,10 +90,10 @@ class ProfileServiceTest {
     @Test
     public void update_Profile() {
         //given
-        ProfileDTO.Update mockUpdateProfileDTO = ProfileDTO.Update.builder()
-                                                                .name(updateName)
-                                                                .hobby(updateHobby)
-                                                                .build();
+        ProfileReqDTO mockUpdateProfileDTO = ProfileReqDTO.builder()
+                                                        .name(updateName)
+                                                        .hobby(updateHobby)
+                                                        .build();
         //when
         when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(user));
         Profile result = profileService.update(username, mockUpdateProfileDTO);

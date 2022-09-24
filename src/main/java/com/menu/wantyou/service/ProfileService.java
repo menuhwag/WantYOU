@@ -1,7 +1,6 @@
 package com.menu.wantyou.service;
 
 import com.menu.wantyou.domain.Profile;
-import com.menu.wantyou.dto.ProfileDTO;
 import com.menu.wantyou.dto.profile.ProfileReqDTO;
 import com.menu.wantyou.lib.exception.NotFoundException;
 

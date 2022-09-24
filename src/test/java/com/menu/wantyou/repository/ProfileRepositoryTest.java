@@ -1,7 +1,7 @@
 package com.menu.wantyou.repository;
 
 import com.menu.wantyou.domain.Profile;
-import com.menu.wantyou.dto.UserDTO;
+import com.menu.wantyou.dto.profile.ProfileReqDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +25,11 @@ class ProfileRepositoryTest {
 
     @BeforeEach
     public void setUp() {
-        UserDTO.SignUp.CreateProfile createProfileDTO = UserDTO.SignUp.CreateProfile.builder()
-                                                                                .name(name)
-                                                                                .birthYear(birthYear)
-                                                                                .birthDay(birthDay)
-                                                                                .build();
+        ProfileReqDTO createProfileDTO = ProfileReqDTO.builder()
+                                                    .name(name)
+                                                    .birthYear(birthYear)
+                                                    .birthDay(birthDay)
+                                                    .build();
 
         Profile profile = createProfileDTO.toEntity();
         savedProfile = profileRepository.save(profile);
