@@ -1,7 +1,9 @@
 package com.menu.wantyou.repository;
 
 import com.menu.wantyou.domain.User;
-import com.menu.wantyou.dto.UserDTO;
+import com.menu.wantyou.dto.SignUpDTO;
+import com.menu.wantyou.dto.profile.ProfileReqDTO;
+import com.menu.wantyou.dto.user.UserSignUpDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -26,22 +28,30 @@ public class UserRepositoryTest {
     private final String name = "홍길동";
     private final String birthYear = "2000";
     private final String birthDay = "1223";
-    private final UserDTO.SignUp signUpDTO = UserDTO.SignUp.builder()
-                                                .username(username)
-                                                .password(password)
-                                                .email(email)
-                                                .nickname(nickname)
-                                                .name(name)
-                                                .birthYear(birthYear)
-                                                .birthDay(birthDay)
-                                                .build();
+
+    private final UserSignUpDTO userSignUpDTO = UserSignUpDTO.builder()
+            .username(username)
+            .password(password)
+            .email(email)
+            .nickname(nickname)
+            .build();
+
+    private final ProfileReqDTO profileReqDTO = ProfileReqDTO.builder()
+            .name(name)
+            .birthYear(birthYear)
+            .birthDay(birthDay)
+            .build();
+    private final SignUpDTO signUpDTO = SignUpDTO.builder()
+            .user(userSignUpDTO)
+            .profile(profileReqDTO)
+            .build();
 
     private User user;
 
     @BeforeEach
     public void createUser() {
-        this.user = signUpDTO.toCreateUserDTO().toEntity();
-        this.user.setProfile(signUpDTO.toCreateProfileDTO().toEntity());
+        this.user = signUpDTO.getUser().toEntity();
+        this.user.setProfile(signUpDTO.getProfile().toEntity());
     }
 
     @Test
@@ -60,10 +70,10 @@ public class UserRepositoryTest {
     }
     @Nested
     @DisplayName("조회")
-    class FindBy {
+    class FindByTest {
         @Nested
         @DisplayName("아이디")
-        class Username {
+        class UsernameTest {
             @Test
             @DisplayName("존재할 시 User 반환")
             void isNotNull() {
@@ -85,7 +95,7 @@ public class UserRepositoryTest {
 
         @Nested
         @DisplayName("이메일")
-        class Email {
+        class EmailTest {
             @Test
             @DisplayName("존재할 시 User 반환")
             void isNotNull() {
@@ -108,10 +118,10 @@ public class UserRepositoryTest {
 
     @Nested
     @DisplayName("중복체크")
-    class CheckExists {
+    class CheckExistsTest {
         @Nested
         @DisplayName("아이디")
-        class CheckExistsUsername {
+        class CheckExistsUsernameTest {
             @Test
             @DisplayName("존재하지 않을 시 false 반환")
             public void checkUsernameNotExists() {
@@ -128,7 +138,7 @@ public class UserRepositoryTest {
 
         @Nested
         @DisplayName("이메일")
-        class CheckExistsEmail {
+        class CheckExistsEmailTest {
             @Test
             @DisplayName("존재하지 않을 시 false 반환")
             public void checkEmailNotExists() {

@@ -1,5 +1,6 @@
 package com.menu.wantyou.lib.util;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +25,7 @@ class VerifyEmailSenderTest {
 
     private VerifyEmailSender verifyEmailSender = new VerifyEmailSender(user, password, baseURL);
 
+    @Disabled
     @Test
     void sendVerifyCode() {
         verifyEmailSender.sendVerifyCode(email, "testcode");

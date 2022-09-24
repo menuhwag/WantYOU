@@ -1,6 +1,6 @@
 package com.menu.wantyou.domain;
 
-import com.menu.wantyou.dto.UserDTO;
+import com.menu.wantyou.dto.user.UserUpdateDTO;
 import com.menu.wantyou.lib.enumeration.Role;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,10 +9,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("User Domain Test")
 class UserTest {
-    private String username = "jack01";
-    private String password = "passw0rd";
-    private String email = "jack01@gmail.com";
-    private String nickname = "jackson";
+    private final String username = "jack01";
+    private final String password = "passw0rd";
+    private final String email = "jack01@gmail.com";
+    private final String nickname = "jackson";
 
     @Test
     public void createUser() {
@@ -43,7 +43,7 @@ class UserTest {
         String update_password = "password";
         String update_email = "jack01@naver.com";
 
-        UserDTO.Update updateUserDTO = UserDTO.Update.builder()
+        UserUpdateDTO updateUserDTO = UserUpdateDTO.builder()
                                             .password(update_password)
                                             .email(update_email)
                                             .build();

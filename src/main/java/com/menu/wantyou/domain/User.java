@@ -54,4 +54,19 @@ public class User extends TimestampsCreatedModified {
     @Builder.Default
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
+
+    public void updatePassword(String password) {
+        if (password == null) return;
+        this.password = password;
+    }
+
+    public void updateEmail(String email) {
+        if (email == null) return;
+        this.email = email;
+    }
+
+    public void updateNickname(String nickname) {
+        if (nickname == null) return;
+        this.nickname = nickname;
+    }
 }
