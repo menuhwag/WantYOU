@@ -1,12 +1,10 @@
 package com.menu.wantyou.controller;
 
 import com.menu.wantyou.domain.UserDetailsImpl;
-import com.menu.wantyou.dto.ProfileDTO;
 import com.menu.wantyou.dto.profile.ProfileReqDTO;
 import com.menu.wantyou.dto.profile.ProfileResDTO;
 import com.menu.wantyou.service.ProfileServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
