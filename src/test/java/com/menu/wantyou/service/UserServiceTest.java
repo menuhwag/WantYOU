@@ -3,7 +3,10 @@ package com.menu.wantyou.service;
 import com.menu.wantyou.domain.EmailVerifyToken;
 import com.menu.wantyou.domain.Profile;
 import com.menu.wantyou.domain.User;
-import com.menu.wantyou.dto.UserDTO;
+import com.menu.wantyou.dto.SignUpDTO;
+import com.menu.wantyou.dto.profile.ProfileReqDTO;
+import com.menu.wantyou.dto.user.UserSignUpDTO;
+import com.menu.wantyou.dto.user.UserUpdateDTO;
 import com.menu.wantyou.lib.exception.ExistsValueException;
 import com.menu.wantyou.lib.exception.NotFoundException;
 import com.menu.wantyou.lib.util.VerifyEmailSender;
@@ -51,28 +54,37 @@ class UserServiceTest {
     private final String birthYear = "2000";
     private final String birthDay = "1223";
 
-    private UserDTO.SignUp signupDTO;
+    private SignUpDTO signupDTO;
     private User user;
     private User savedUser;
     private Profile profile;
 
     @Nested
     @DisplayName("유저 생성")
-    class CreateUser {
+    class CreateUserTest {
 
         @BeforeEach
         public void setUp() {
-            signupDTO = UserDTO.SignUp.builder()
-                                .username(username)
-                                .password(password)
-                                .email(email)
-                                .nickname(nickname)
-                                .name(name)
-                                .birthYear(birthYear)
-                                .birthDay(birthDay)
-                                .build();
-            user = signupDTO.toCreateUserDTO().toEntity();
-            profile = signupDTO.toCreateProfileDTO().toEntity();
+            UserSignUpDTO userSignUpDTO = UserSignUpDTO.builder()
+                    .username(username)
+                    .password(password)
+                    .email(email)
+                    .nickname(nickname)
+                    .build();
+
+            ProfileReqDTO profileReqDTO = ProfileReqDTO.builder()
+                    .name(name)
+                    .birthYear(birthYear)
+                    .birthDay(birthDay)
+                    .build();
+
+            signupDTO = SignUpDTO.builder()
+                    .user(userSignUpDTO)
+                    .profile(profileReqDTO)
+                    .build();
+
+            user = signupDTO.getUser().toEntity();
+            profile = signupDTO.getProfile().toEntity();
             user.setProfile(profile);
         }
 
@@ -88,7 +100,7 @@ class UserServiceTest {
 
             //when
             try (MockedStatic<VerifyEmailSender> mockedStatic = mockStatic(VerifyEmailSender.class)) {
-                savedUser = userService.create(signupDTO.toCreateUserDTO(), signupDTO.toCreateProfileDTO());
+                savedUser = userService.create(signupDTO.getUser(), signupDTO.getProfile());
             }
 
             //then
@@ -98,13 +110,13 @@ class UserServiceTest {
 
         @Nested
         @DisplayName("중복체크")
-        class ExistsKey {
+        class ExistsKeyTest {
             @Test
             @DisplayName("예외 발생:아이디 중복")
             void throwsExceptionWhenExistsUsername() {
                 given(userRepository.existsByUsername(any(String.class))).willReturn(true);
 
-                assertThrows(ExistsValueException.class, () -> userService.create(signupDTO.toCreateUserDTO(), signupDTO.toCreateProfileDTO()));
+                assertThrows(ExistsValueException.class, () -> userService.create(signupDTO.getUser(), signupDTO.getProfile()));
             }
 
             @Test
@@ -112,32 +124,32 @@ class UserServiceTest {
             void throwsExceptionWhenExistsEmail() {
                 given(userRepository.existsByEmail(any(String.class))).willReturn(true);
 
-                assertThrows(ExistsValueException.class, () -> userService.create(signupDTO.toCreateUserDTO(), signupDTO.toCreateProfileDTO()));
+                assertThrows(ExistsValueException.class, () -> userService.create(signupDTO.getUser(), signupDTO.getProfile()));
             }
         }
     }
 
     @Nested
     @DisplayName("유저 수정")
-    class UpdateUser {
+    class UpdateUserTest {
         String newPW = "12341234";
         String newEmail = "jack01@naver.com";
         String newNickname = "jacking";
-        private UserDTO.Update updateUserDTO;
+        private UserUpdateDTO updateUserDTO;
 
         @BeforeEach
         public void setUp() {
-            updateUserDTO = UserDTO.Update.builder()
+            updateUserDTO = UserUpdateDTO.builder()
                                 .password(newPW)
                                 .email(newEmail)
                                 .nickname(newNickname)
                                 .build();
-            UserDTO.SignUp.CreateUser createUserDTO = UserDTO.SignUp.CreateUser.builder()
-                                                                        .username(username)
-                                                                        .password(password)
-                                                                        .email(email)
-                                                                        .nickname(nickname)
-                                                                        .build();
+            UserSignUpDTO createUserDTO = UserSignUpDTO.builder()
+                                                    .username(username)
+                                                    .password(password)
+                                                    .email(email)
+                                                    .nickname(nickname)
+                                                    .build();
             user = createUserDTO.toEntity();
         }
 

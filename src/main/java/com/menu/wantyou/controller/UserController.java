@@ -4,6 +4,9 @@ import com.menu.wantyou.domain.User;
 import com.menu.wantyou.domain.UserDetailsImpl;
 import com.menu.wantyou.dto.*;
 import com.menu.wantyou.dto.admin.AdminUpdateUserDTO;
+import com.menu.wantyou.dto.user.UserResDTO;
+import com.menu.wantyou.dto.user.UserSignInDTO;
+import com.menu.wantyou.dto.user.UserUpdateDTO;
 import com.menu.wantyou.lib.enumeration.Key;
 import com.menu.wantyou.lib.exception.*;
 import com.menu.wantyou.lib.util.jwt.JwtFilter;
@@ -47,12 +50,13 @@ public class UserController {
     }
 
     @PostMapping(value = "/signup", produces = "application/json; charset=UTF-8")
-    public ResponseEntity<UserDTO.Response> signUp(@Valid @RequestBody UserDTO.SignUp signupDTO) throws DuplicateKeyException {
-        return new ResponseEntity<>(new UserDTO.Response(userService.create(signupDTO.toCreateUserDTO(), signupDTO.toCreateProfileDTO())), HttpStatus.CREATED);
+    public ResponseEntity<UserResDTO> signUp(@Valid @RequestBody SignUpDTO signupDTO) throws DuplicateKeyException {
+        return ResponseEntity.status(201)
+                .body(new UserResDTO(userService.create(signupDTO.getUser(), signupDTO.getProfile())));
     }
 
     @PostMapping(value = "/signin", produces = "application/json; charset=UTF-8")
-    public ResponseEntity<JwtResponseDTO> signIn(@Valid @RequestBody UserDTO.SignIn signinDTO) {
+    public ResponseEntity<JwtResponseDTO> signIn(@Valid @RequestBody UserSignInDTO signinDTO) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(signinDTO.getUsername(), signinDTO.getPassword()); // 인증용 객체 생성
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -62,17 +66,21 @@ public class UserController {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
 
-        return new ResponseEntity<>(new JwtResponseDTO(jwt), httpHeaders, HttpStatus.OK);
+        return ResponseEntity.status(200)
+                .headers(httpHeaders)
+                .body(new JwtResponseDTO(jwt));
     }
 
     @GetMapping(value = "/me", produces = "application/json; charset=UTF-8")
-    public ResponseEntity<UserDTO.Response> getMyAuth(@AuthenticationPrincipal UserDetailsImpl myAuth) {
-        return new ResponseEntity<>(new UserDTO.Response(userService.findOneByUsername(myAuth.getUsername())), HttpStatus.OK);
+    public ResponseEntity<UserResDTO> getMyAuth(@AuthenticationPrincipal UserDetailsImpl myAuth) {
+        return ResponseEntity.status(200)
+                .body(new UserResDTO(userService.findOneByUsername(myAuth.getUsername())));
     }
 
     @PatchMapping(value = "/me", produces = "application/json; charset=UTF-8")
-    public ResponseEntity<UserDTO.Response> updateMyAuth(@AuthenticationPrincipal UserDetailsImpl myAuth, @Valid @RequestBody UserDTO.Update updateUserDTO) {
-        return new ResponseEntity<>(new UserDTO.Response(userService.update(myAuth.getUsername(), updateUserDTO)), HttpStatus.OK);
+    public ResponseEntity<UserResDTO> updateMyAuth(@AuthenticationPrincipal UserDetailsImpl myAuth, @Valid @RequestBody UserUpdateDTO updateUserDTO) {
+        return ResponseEntity.status(200)
+                .body(new UserResDTO(userService.update(myAuth.getUsername(), updateUserDTO)));
     }
 
     @DeleteMapping(value = "/me", produces = "application/json; charset=UTF-8")
@@ -93,18 +101,20 @@ public class UserController {
     }
 
     @GetMapping(value = "", produces = "application/json; charset=UTF-8")
-    public ResponseEntity<List<UserDTO.Response>> findAll() {
-        List<UserDTO.Response> userResponse = new ArrayList<>();
+    public ResponseEntity<List<UserResDTO>> findAll() {
+        List<UserResDTO> userResponse = new ArrayList<>();
         List<User> users = userService.findAll();
         users.forEach(user -> {
-            userResponse.add(new UserDTO.Response(user));
+            userResponse.add(new UserResDTO(user));
         });
-        return new ResponseEntity<>(userResponse, HttpStatus.OK);
+        return ResponseEntity.status(200)
+                .body(userResponse);
     }
 
     @PatchMapping(value = "", produces = "application/json; charset=UTF-8")
-    public ResponseEntity<UserDTO.Response> updateEnableAndRole(@Valid @RequestBody AdminUpdateUserDTO adminUpdateUserDTO) {
-        return new ResponseEntity<>(new UserDTO.Response(userService.updateEnableAndRole(adminUpdateUserDTO)), HttpStatus.OK);
+    public ResponseEntity<UserResDTO> updateEnableAndRole(@Valid @RequestBody AdminUpdateUserDTO adminUpdateUserDTO) {
+        return ResponseEntity.status(200)
+                .body(new UserResDTO(userService.updateEnableAndRole(adminUpdateUserDTO)));
     }
 
     @ExceptionHandler(HttpException.class)

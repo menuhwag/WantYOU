@@ -3,8 +3,10 @@ package com.menu.wantyou.service;
 import com.menu.wantyou.domain.EmailVerifyToken;
 import com.menu.wantyou.domain.User;
 import com.menu.wantyou.dto.ChangeVerifyEmailDTO;
-import com.menu.wantyou.dto.UserDTO;
 import com.menu.wantyou.dto.admin.AdminUpdateUserDTO;
+import com.menu.wantyou.dto.profile.ProfileReqDTO;
+import com.menu.wantyou.dto.user.UserSignUpDTO;
+import com.menu.wantyou.dto.user.UserUpdateDTO;
 import com.menu.wantyou.lib.exception.EmailSendException;
 import com.menu.wantyou.lib.exception.ExistsValueException;
 import com.menu.wantyou.lib.exception.NotFoundException;
@@ -29,7 +31,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional(rollbackOn= {EmailSendException.class, IllegalArgumentException.class})
-    public User create(UserDTO.SignUp.CreateUser createUserDTO, UserDTO.SignUp.CreateProfile createProfileDTO) throws ExistsValueException{
+    public User create(UserSignUpDTO createUserDTO, ProfileReqDTO createProfileDTO) throws ExistsValueException{
         String username = createUserDTO.getUsername();
         String email = createUserDTO.getEmail();
 
@@ -62,11 +64,11 @@ public class UserService {
     }
 
     @Transactional
-    public User update(String username,UserDTO.Update updateUserDTO) {
+    public User update(String username, UserUpdateDTO updateUserDTO) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundException("해당 유저 정보를 찾을 수 없습니다."));
-        if (updateUserDTO.getPassword() != null) user.setPassword(passwordEncoder.encode(updateUserDTO.getPassword()));
-        if (updateUserDTO.getEmail() != null) user.setEmail(updateUserDTO.getEmail());
-        if (updateUserDTO.getNickname() != null) user.setNickname(updateUserDTO.getNickname());
+        user.updatePassword(passwordEncoder.encode(updateUserDTO.getPassword()));
+        user.updateEmail(updateUserDTO.getEmail());
+        user.updateNickname(updateUserDTO.getNickname());
         return user;
     }
 
