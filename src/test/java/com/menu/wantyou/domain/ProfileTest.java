@@ -109,4 +109,74 @@ class ProfileTest {
             profile.updateBirthDay(updateProfileDTO.getBirthDay());
         });
     }
+
+    @Test
+    public void nullHobbyUpdateTest() {
+        List<String> hobbies = new ArrayList<>();
+        hobbies.add("축구");
+        hobbies.add("영화");
+
+        ProfileReqDTO profileReqDTO = ProfileReqDTO.builder()
+                .name(name)
+                .birthYear(year)
+                .birthDay(day)
+                .hobby(hobbies)
+                .build();
+
+        Profile profile = profileReqDTO.toEntity();
+
+        String newYear = "2001";
+        String newDay = "1209";
+
+        ProfileReqDTO updateProfileDTO = ProfileReqDTO.builder()
+                                                    .birthYear(newYear)
+                                                    .birthDay(newDay)
+                                                    .build();
+
+        profile.updateName(updateProfileDTO.getName());
+        profile.updateBirthYear(updateProfileDTO.getBirthYear());
+        profile.updateBirthDay(updateProfileDTO.getBirthDay());
+        profile.updateHobby(updateProfileDTO.getHobby());
+
+        assertEquals(name, profile.getName());
+        assertEquals(newYear, profile.getBirthYear());
+        assertEquals(newDay, profile.getBirthDay());
+        assertEquals(String.join(";", hobbies), profile.getHobby());
+    }
+
+    @Test
+    public void emptyHobbyUpdateTest() {
+        List<String> hobbies = new ArrayList<>();
+        hobbies.add("축구");
+        hobbies.add("영화");
+
+        ProfileReqDTO profileReqDTO = ProfileReqDTO.builder()
+                .name(name)
+                .birthYear(year)
+                .birthDay(day)
+                .hobby(hobbies)
+                .build();
+
+        Profile profile = profileReqDTO.toEntity();
+
+        String newYear = "2001";
+        String newDay = "1209";
+        List<String> newHobbies = new ArrayList<>();
+
+        ProfileReqDTO updateProfileDTO = ProfileReqDTO.builder()
+                .birthYear(newYear)
+                .birthDay(newDay)
+                .hobby(newHobbies)
+                .build();
+
+        profile.updateName(updateProfileDTO.getName());
+        profile.updateBirthYear(updateProfileDTO.getBirthYear());
+        profile.updateBirthDay(updateProfileDTO.getBirthDay());
+        profile.updateHobby(updateProfileDTO.getHobby());
+
+        assertEquals(name, profile.getName());
+        assertEquals(newYear, profile.getBirthYear());
+        assertEquals(newDay, profile.getBirthDay());
+        assertEquals("", profile.getHobby());
+    }
 }
