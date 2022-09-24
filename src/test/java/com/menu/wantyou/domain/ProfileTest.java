@@ -2,6 +2,7 @@ package com.menu.wantyou.domain;
 
 import com.menu.wantyou.dto.UserDTO;
 import com.menu.wantyou.dto.ProfileDTO;
+import com.menu.wantyou.dto.profile.ProfileReqDTO;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -20,12 +21,12 @@ class ProfileTest {
 
     @Test
     public void Create_Profile() {
-        UserDTO.SignUp.CreateProfile createProfileDTO = UserDTO.SignUp.CreateProfile.builder()
-                                                                                .name(name)
-                                                                                .birthYear(year)
-                                                                                .birthDay(day)
-                                                                                .build();
-        Profile profile = createProfileDTO.toEntity();
+        ProfileReqDTO profileReqDTO = ProfileReqDTO.builder()
+                                                .name(name)
+                                                .birthYear(year)
+                                                .birthDay(day)
+                                                .build();
+        Profile profile = profileReqDTO.toEntity();
 
         assertNull(profile.getId());
         assertEquals(name, profile.getName());
@@ -40,30 +41,30 @@ class ProfileTest {
         String day1 = "1302";
         String day2 = "0230";
 
-        UserDTO.SignUp.CreateProfile createProfileDTO1 = UserDTO.SignUp.CreateProfile.builder()
-                                                                                .name(name)
-                                                                                .birthYear(year)
-                                                                                .birthDay(day1)
-                                                                                .build();
+        ProfileReqDTO profileReqDTO1 = ProfileReqDTO.builder()
+                                                    .name(name)
+                                                    .birthYear(year)
+                                                    .birthDay(day1)
+                                                    .build();
 
-        UserDTO.SignUp.CreateProfile createProfileDTO2 = UserDTO.SignUp.CreateProfile.builder()
-                                                                                .name(name)
-                                                                                .birthYear(year)
-                                                                                .birthDay(day2)
-                                                                                .build();
+        ProfileReqDTO profileReqDTO2 = ProfileReqDTO.builder()
+                                                    .name(name)
+                                                    .birthYear(year)
+                                                    .birthDay(day2)
+                                                    .build();
 
-        assertThrows(IllegalArgumentException.class, createProfileDTO1::toEntity);
-        assertThrows(IllegalArgumentException.class, createProfileDTO2::toEntity);
+        assertThrows(IllegalArgumentException.class, profileReqDTO1::toEntity);
+        assertThrows(IllegalArgumentException.class, profileReqDTO2::toEntity);
     }
 
     @Test
     public void Update_Profile() {
-        UserDTO.SignUp.CreateProfile createProfileDTO = UserDTO.SignUp.CreateProfile.builder()
-                                                                                .name(name)
-                                                                                .birthYear(year)
-                                                                                .birthDay(day)
-                                                                                .build();
-        Profile profile = createProfileDTO.toEntity();
+        ProfileReqDTO profileReqDTO = ProfileReqDTO.builder()
+                                                .name(name)
+                                                .birthYear(year)
+                                                .birthDay(day)
+                                                .build();
+        Profile profile = profileReqDTO.toEntity();
         String newName = "김첨지";
         String newYear = "2001";
         String newDay = "1009";
@@ -71,17 +72,17 @@ class ProfileTest {
         newHobby.add("축구");
         newHobby.add("영화");
 
-        ProfileDTO.Update updateProfileDTO = ProfileDTO.Update.builder()
-                                                            .name(newName)
-                                                            .birthYear(newYear)
-                                                            .birthDay(newDay)
-                                                            .hobby(newHobby)
-                                                            .build();
+        ProfileReqDTO updateProfileReqDTO = ProfileReqDTO.builder()
+                                                        .name(newName)
+                                                        .birthYear(newYear)
+                                                        .birthDay(newDay)
+                                                        .hobby(newHobby)
+                                                        .build();
 
-        profile.updateName(updateProfileDTO.getName());
-        profile.updateBirthYear(updateProfileDTO.getBirthYear());
-        profile.updateBirthDay(updateProfileDTO.getBirthDay());
-        profile.updateHobby(updateProfileDTO.getHobby());
+        profile.updateName(updateProfileReqDTO.getName());
+        profile.updateBirthYear(updateProfileReqDTO.getBirthYear());
+        profile.updateBirthDay(updateProfileReqDTO.getBirthDay());
+        profile.updateHobby(updateProfileReqDTO.getHobby());
 
         assertEquals(newName, profile.getName());
         assertEquals(newYear, profile.getBirthYear());
@@ -91,19 +92,19 @@ class ProfileTest {
 
     @Test
     public void When_Updating_BirthDay_is_Wrong() {
-        UserDTO.SignUp.CreateProfile createProfileDTO = UserDTO.SignUp.CreateProfile.builder()
-                                                                                .name(name)
-                                                                                .birthYear(year)
-                                                                                .birthDay(day)
-                                                                                .build();
-        Profile profile = createProfileDTO.toEntity();
+        ProfileReqDTO profileReqDTO = ProfileReqDTO.builder()
+                                                    .name(name)
+                                                    .birthYear(year)
+                                                    .birthDay(day)
+                                                    .build();
+        Profile profile = profileReqDTO.toEntity();
         String newYear = "2001";
         String newDay = "1309";
 
-        ProfileDTO.Update updateProfileDTO = ProfileDTO.Update.builder()
-                                                            .birthYear(newYear)
-                                                            .birthDay(newDay)
-                                                            .build();
+        ProfileReqDTO updateProfileDTO = ProfileReqDTO.builder()
+                                                        .birthYear(newYear)
+                                                        .birthDay(newDay)
+                                                        .build();
 
         assertThrows(IllegalArgumentException.class, () -> {
             profile.updateBirthYear(updateProfileDTO.getBirthYear());
