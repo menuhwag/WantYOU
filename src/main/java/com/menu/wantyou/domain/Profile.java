@@ -5,8 +5,6 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 @Getter
@@ -52,7 +50,7 @@ public class Profile {
     }
 
     public void updateHobby(List<String> hobby) {
-        if (hobby == null || hobby.size() == 0) return;
+        if (hobby == null) return;
         this.hobby = parseHobby(hobby);
     }
 
