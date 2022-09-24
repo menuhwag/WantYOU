@@ -1,5 +1,6 @@
 package com.menu.wantyou.domain;
 
+import com.menu.wantyou.lib.util.DateValidator;
 import lombok.*;
 
 import javax.persistence.*;
@@ -40,58 +41,19 @@ public class Profile {
 
     public void updateBirthYear(String year) {
         if (year == null) return;
-        validBirth(year, this.birthDay);
+        DateValidator.valid(year, this.birthDay);
         this.birthYear = year;
     }
 
     public void updateBirthDay(String day) {
         if (day == null) return;
-        validBirth(this.birthYear, day);
+        DateValidator.valid(this.birthYear, day);
         this.birthDay = day;
     }
 
     public void updateHobby(List<String> hobby) {
         if (hobby == null || hobby.size() == 0) return;
-        String hobbyToStr = parseHobby(hobby);
-        this.hobby = hobbyToStr;
-    }
-
-    private void validBirth(String birthYear, String birthDay) throws IllegalArgumentException{
-        if (!existBirthYear(birthYear)) return;
-        if (!existBirthDay(birthDay)) return;
-        parseDate(toStringDate(birthYear, birthDay));
-    }
-
-    private boolean existBirthYear(String birthYear) {
-        return birthYear != null;
-    }
-
-    private boolean existBirthDay(String birthDay) {
-        return birthDay != null;
-    }
-
-    private void parseDate(String date) throws IllegalArgumentException {
-        try {
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-            format.setLenient(false);
-            format.parse(date);
-        } catch (ParseException e) {
-            throw new IllegalArgumentException("유효하지 않은 생일입니다.");
-        }
-    }
-
-    private String toStringDate(String birthYear, String birthDay) {
-        String month = parseMonth(birthDay);
-        String day = parseDay(birthDay);
-        return birthYear + "-" + month + "-" + day;
-    }
-
-    private String parseMonth(String birthDay) {
-        return birthDay.substring(0,2);
-    }
-
-    private String parseDay(String birthDay) {
-        return birthDay.substring(2);
+        this.hobby = parseHobby(hobby);
     }
 
     private String parseHobby(List<String> hobby) {
