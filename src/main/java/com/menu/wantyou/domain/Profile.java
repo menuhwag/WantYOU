@@ -1,7 +1,5 @@
 package com.menu.wantyou.domain;
 
-import com.menu.wantyou.dto.UserDTO;
-import com.menu.wantyou.dto.ProfileDTO;
 import lombok.*;
 
 import javax.persistence.*;
@@ -11,6 +9,8 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 @Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 public class Profile {
@@ -33,26 +33,19 @@ public class Profile {
     @Column
     private String hobby;
 
-    public Profile(UserDTO.SignUp.CreateProfile createProfileDTO) {
-        String birthYear = createProfileDTO.getBirthYear();
-        String birthDay = createProfileDTO.getBirthDay();
-        validBirth(birthYear, birthDay);
-        this.name = createProfileDTO.getName();
-        this.birthYear = birthYear;
-        this.birthDay = birthDay;
-        this.hobby = parseHobby(createProfileDTO.getHobby());
-    }
-
     public void updateName(String name) {
+        if (name == null) return;
         this.name = name;
     }
 
     public void updateBirthYear(String year) {
+        if (year == null) return;
         validBirth(year, this.birthDay);
         this.birthYear = year;
     }
 
     public void updateBirthDay(String day) {
+        if (day == null) return;
         validBirth(this.birthYear, day);
         this.birthDay = day;
     }

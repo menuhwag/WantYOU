@@ -2,6 +2,8 @@ package com.menu.wantyou.controller;
 
 import com.menu.wantyou.domain.UserDetailsImpl;
 import com.menu.wantyou.dto.ProfileDTO;
+import com.menu.wantyou.dto.profile.ProfileReqDTO;
+import com.menu.wantyou.dto.profile.ProfileResDTO;
 import com.menu.wantyou.service.ProfileServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,17 +20,19 @@ public class ProfileController {
     private final ProfileServiceImpl profileService;
 
     @GetMapping(value = "/me", produces = "application/json; charset=UTF-8")
-    public ResponseEntity<ProfileDTO.Response> getMyProfile(@AuthenticationPrincipal UserDetailsImpl myAuth) {
-        return new ResponseEntity<>(new ProfileDTO.Response(profileService.findByUsername(myAuth.getUsername())), HttpStatus.OK);
+    public ResponseEntity<ProfileResDTO> getMyProfile(@AuthenticationPrincipal UserDetailsImpl myAuth) {
+        return ResponseEntity.ok(new ProfileResDTO(profileService.findByUsername(myAuth.getUsername())));
     }
 
     @PatchMapping(value = "/me", produces = "application/json; charset=UTF-8")
-    public ResponseEntity<ProfileDTO.Response> updateMyProfile(@AuthenticationPrincipal UserDetailsImpl myAuth, @Valid @RequestBody ProfileDTO.Update updateProfileDTO) {
-        return new ResponseEntity<>(new ProfileDTO.Response(profileService.update(myAuth.getUsername(), updateProfileDTO)), HttpStatus.OK);
+    public ResponseEntity<ProfileResDTO> updateMyProfile(
+            @AuthenticationPrincipal UserDetailsImpl myAuth,
+            @Valid @RequestBody ProfileReqDTO updateProfileDTO) {
+        return ResponseEntity.ok(new ProfileResDTO(profileService.update(myAuth.getUsername(), updateProfileDTO)));
     }
 
     @GetMapping(value = "/{username}", produces = "application/json; charset=UTF-8")
-    public ResponseEntity<ProfileDTO.Response> getOtherProfile(@PathVariable("username") String username) {
-        return new ResponseEntity<>(new ProfileDTO.Response(profileService.findByUsername(username)), HttpStatus.OK);
+    public ResponseEntity<ProfileResDTO> getOtherProfile(@PathVariable("username") String username) {
+        return ResponseEntity.ok(new ProfileResDTO(profileService.findByUsername(username)));
     }
 }
