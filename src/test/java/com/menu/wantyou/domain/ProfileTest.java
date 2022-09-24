@@ -1,7 +1,5 @@
 package com.menu.wantyou.domain;
 
-import com.menu.wantyou.dto.UserDTO;
-import com.menu.wantyou.dto.ProfileDTO;
 import com.menu.wantyou.dto.profile.ProfileReqDTO;
 import org.junit.jupiter.api.Test;
 
