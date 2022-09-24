@@ -5,12 +5,15 @@ import com.menu.wantyou.lib.util.DateValidator;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Size;
 import java.util.List;
 
 @Getter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ProfileReqDTO {
     private String name;
 
