@@ -2,7 +2,7 @@ package com.menu.wantyou.service;
 
 import com.menu.wantyou.domain.Profile;
 import com.menu.wantyou.domain.User;
-import com.menu.wantyou.dto.ProfileDTO;
+import com.menu.wantyou.dto.profile.ProfileReqDTO;
 import com.menu.wantyou.lib.exception.NotFoundException;
 import com.menu.wantyou.repository.ProfileRepository;
 import com.menu.wantyou.repository.UserRepository;
@@ -24,12 +24,14 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     @Transactional
-    public Profile update(String username, ProfileDTO.Update updateProfileDTO) throws NotFoundException{
+    public Profile update(String username, ProfileReqDTO updateProfileDTO) throws NotFoundException{
         Profile profile = findByUsername(username);
-        if (updateProfileDTO.getName() != null) profile.updateName(updateProfileDTO.getName());
-        if (updateProfileDTO.getBirthYear() != null) profile.updateBirthYear(updateProfileDTO.getBirthYear());
-        if (updateProfileDTO.getBirthDay() != null) profile.updateBirthDay(updateProfileDTO.getBirthDay());
-        if (updateProfileDTO.getHobby() != null) profile.updateHobby(updateProfileDTO.getHobby());
+
+        profile.updateName(updateProfileDTO.getName());
+        profile.updateBirthYear(updateProfileDTO.getBirthYear());
+        profile.updateBirthDay(updateProfileDTO.getBirthDay());
+        profile.updateHobby(updateProfileDTO.getHobby());
+
         return profile;
     }
 
